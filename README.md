@@ -1,2 +1,5 @@
-plugins
+XChat
+=====
+
+Supybot
 =======
