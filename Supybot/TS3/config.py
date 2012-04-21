@@ -59,10 +59,9 @@ conf.registerChannelValue(TS3, 'querytype',
 conf.registerChannelValue(TS3, 'ip', 'localhost')
 conf.registerChannelValue(TS3, 'username')
 conf.registerChannelValue(TS3, 'password')
-conf.registerChannelValue(TS3, 'port', '10011')
+conf.registerChannelValue(TS3, 'port', 
+	registry.Integer(10011)
 # This is where your configuration variables (if any) should go.  For example:
 # conf.registerGlobalValue(TS3, 'someConfigVariableName',
 #     registry.Boolean(False, _("""Help for someConfigVariableName.""")))
 
-
-# vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:
