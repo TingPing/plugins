@@ -1,1 +1,3 @@
-stuff will go here.
+Growl
+-----
+Adds Growl notifications to XChat.
