@@ -51,11 +51,9 @@ def configure(advanced):
 
 
 TS3 = conf.registerPlugin('TS3')
-conf.registerGlobalValue(TS3, 'allowserverquery', 'False',
-		_("""Serverquery can be abused, disable completely for security.""")
 conf.registerChannelValue(TS3, 'querytype',
-	registry.String('Client', _("""'Client' connects to a clients IP and can only get information,
-	'Server' can make configuration changes or get info and directly connets to the server"""))
+	registry.String('Client', _("""'Client' connects to a clients IP,
+	'Server' directly connets to the server"""))
 conf.registerChannelValue(TS3, 'ip', 'localhost')
 conf.registerChannelValue(TS3, 'username')
 conf.registerChannelValue(TS3, 'password')
