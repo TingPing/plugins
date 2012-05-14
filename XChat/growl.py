@@ -1,6 +1,6 @@
 __module_name__='Growl for XChat'
 __module_description__='Growl for Windows support for XChat-WDK' 
-__module_version__='11'
+__module_version__='12'
 
 #in theory works on any platform for growl but only tested on windows with wdk
 #requires https://github.com/kfdm/gntp
@@ -109,8 +109,20 @@ def pm_callback(word, word_eol, userdata):
 			lasttime = time.time()
 			return True
 
+	def active():
+		try:
+			chat = xchat.find_context()
+			currentchat = chat.get_info("channel")
+			status = xchat.get_info("win_status")
+			if currentchat == word[0] and status == "active":
+				return True
+			else:
+				return False
+		except:
+			return False
 
-	if not spam():
+
+	if not spam() and not active():
 		try:
 			growl.notify(
 				noteType='Private Message',
