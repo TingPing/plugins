@@ -3,7 +3,7 @@ import xchat
 
 __module_name__ = "Pithos"
 __module_author__ = "TingPing"
-__module_version__ = "1"
+__module_version__ = "2"
 __module_description__ = "Announce Pithos Songs"
 
 session_bus = dbus.SessionBus()
@@ -17,7 +17,7 @@ def pithos(word, word_eol, userdata):
 
 	song = player.GetCurrentSong()
 	# to be configurable
-	msg = 'me is now playing ' + song['title'] + ' by ' + song['artist'] + '.'
+	msg = 'me is now playing %s by %s on %s.'%(song['title'], song['artist'], song['album'])
 
 	if len(word) > 1:
 		# not very useful?
@@ -34,7 +34,7 @@ def pithos(word, word_eol, userdata):
 			player.BanCurrentSong()
 
 		else:
-			xchat.prnt('Pithos: Valid commands are playing, next, love, hate')
+			xchat.prnt('Pithos: Valid commands are playing, next, love, hate, or without args to announce')
 	else:
 		xchat.command(msg)
 
