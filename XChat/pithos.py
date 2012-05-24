@@ -39,4 +39,4 @@ def pithos(word, word_eol, userdata):
 		xchat.command(msg)
 
 xchat.hook_command("pithos", pithos)
-xchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.'))
+xchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.')
