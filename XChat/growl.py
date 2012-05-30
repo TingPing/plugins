@@ -74,16 +74,16 @@ def spam(currenttime, currentnick):
 	global lastnick
 
 	if xchat.nickcmp(lastnick, currentnick) != 0:
-		lasttime = time.time()
-		lastnick = word[0]
+		lasttime = time()
+		lastnick = currentnick
 		return False
 
 	elif lasttime + 3 < currenttime: 
-		lasttime = time.time()
+		lasttime = time()
 		return False
 
 	else:
-		lasttime = time.time()
+		lasttime = time()
 		return True
 
 def active(chan):
