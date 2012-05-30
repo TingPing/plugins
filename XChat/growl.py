@@ -1,11 +1,13 @@
+# -*- coding: utf-8; tab-width: 4; -*-
+
 __module_name__='Growl for XChat'
 __module_description__='Growl for Windows support for XChat-WDK' 
-__module_version__='12'
+__module_version__='13'
 
 #in theory works on any platform for growl but only tested on windows with wdk
 #requires https://github.com/kfdm/gntp
-import time
 import re
+from time import time
 
 import xchat
 try:
@@ -14,7 +16,7 @@ except:
 	xchat.prnt('Growl Error: Please install https://github.com/kfdm/gntp')
 
 xchatlogo = 'http://forum.xchat.org/styles/prosilver/imageset/site_logo.png'
-lasttime = time.time()
+lasttime = time()
 lastnick = ''
 
 # initial setup of growl and list of possible notifications
@@ -27,196 +29,129 @@ growl = gntp.notifier.GrowlNotifier(
 	defaultNotifications=['Highlight', 'Private Message', 'Invited', 'Server Notice',
 							'Disconnected', 'Killed', 'Kicked', 'Banned'],
 	applicationIcon=xchatlogo,
-	hostname='localhost',
-	password=''
+	#hostname='localhost',
+	#password=''
 )
 
 try:
 	growl.register() 
-	xchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.')
 except:
 	xchat.prnt('Growl Error: Could not register with Growl')
 
+
+def growlnotify(_type, title, desc='', pri=0):
+	try:
+		growl.notify(
+			noteType=_type,
+			title=title,
+			description=desc,
+			icon=xchatlogo,
+			sticky=False,
+			priority=pri
+		)
+	except: 
+		xchat.prnt('Growl Error: Growl is not running.')
+
+
+# now checks for and ignores mass hilights, performance impact not yet tested, maybe removed, optional, or only used on small channels
+# disabled for now
+# def masshilight(nick, message):
+# 	userlist = ''
+
+# 	for user in xchat.get_list('users'):
+# 		if user.nick != word[0]:
+# 			userlist += user.nick + ' '
+
+# 	if re.search(userlist[:-1], xchat.strip(message)):
+# 		return True
+
+# 	else:
+# 		return False
+
+def spam(currenttime, currentnick):
+	# Highlight and PM now have spam protection which previously could hang XChat
+	global lasttime
+	global lastnick
+
+	if xchat.nickcmp(lastnick, currentnick) != 0:
+		lasttime = time.time()
+		lastnick = word[0]
+		return False
+
+	elif lasttime + 3 < currenttime: 
+		lasttime = time.time()
+		return False
+
+	else:
+		lasttime = time.time()
+		return True
+
+def active(chan):
+	# Checks to see if chat is active to reduce annoying notifications
+	try:
+		chat = xchat.find_context()
+		currentchat = chat.get_info("channel")
+		status = xchat.get_info("win_status")
+		if currentchat == chan and status == "active":
+			return True
+		else:
+			return False
+	except:
+		return False
+
+
 # start list of notifications
 def hilight_callback(word, word_eol, userdata):
-	# now checks for and ignores mass hilights, performance impact not yet tested, maybe removed, optional, or only used on small channels
-	# disabled for now
-	# def masshilight():
-	# 	userlist = ''
-
-	# 	for user in xchat.get_list('users'):
-	# 		if user.nick != word[0]:
-	# 			userlist += user.nick + ' '
-
-	# 	if re.search(userlist[:-1], xchat.strip(word[1])):
-	# 		return True
-
-	# 	else:
-	# 		return False
-
-	def spam():
-		# this and PM now have spam protection which previously could crash XChat
-		currenttime = time.time()
-		currentnick = word[0]
-		global lasttime
-		global lastnick
-
-		if xchat.nickcmp(lastnick, currentnick) != 0:
-			lasttime = time.time()
-			lastnick = word[0]
-			return False
-
-		elif lasttime + 3 < currenttime: 
-			lasttime = time.time()
-			return False
-
-		else:
-			lasttime = time.time()
-			return True
-
-	if not spam(): # and not masshilight():
-		try:
-			growl.notify(
-				noteType='Highlight',
-				title='Highlight by ' + word[0],
-				description=word[1],
-				icon=xchatlogo,
-				sticky=False,
-				priority=1
-			)
-		except: xchat.prnt('Growl Error: Growl is not running.')
+	if not spam(time(), word[0]): # and not masshilight(word[0], word[1]):
+		growlnotify('Highlight',
+					'Highlight by ' + word[0],
+					word[1],
+					1)
 
 def pm_callback(word, word_eol, userdata):
-	currenttime = time.time()
-	currentnick = word[0]
-
-	def spam():
-		currenttime = time.time()
-		currentnick = word[0]
-		global lasttime
-		global lastnick
-
-		if xchat.nickcmp(lastnick, currentnick) != 0:
-			lasttime = time.time()
-			lastnick = word[0]
-			return False
-
-		elif lasttime + 3 < currenttime: 
-			lasttime = time.time()
-			return False
-
-		else:
-			lasttime = time.time()
-			return True
-
-	def active():
-		try:
-			chat = xchat.find_context()
-			currentchat = chat.get_info("channel")
-			status = xchat.get_info("win_status")
-			if currentchat == word[0] and status == "active":
-				return True
-			else:
-				return False
-		except:
-			return False
-
-
-	if not spam() and not active():
-		try:
-			growl.notify(
-				noteType='Private Message',
-				title='Messaged by ' + word[0],
-				description=word[1],
-				icon=xchatlogo,
-				sticky=False,
-				priority=1
-			)
-		except: xchat.prnt('Growl Error: Growl is not running.')
+	if not spam(time(), word[0]) and not active(word[0]):
+		growlnotify('Private Message',
+				'Messaged by ' + word[0],
+				word[1],
+				1)
 
 def invited_callback(word, word_eol, userdata):
-	try:
-		growl.notify(
-			noteType='Invited', 	
-			title='Invited to ' + word[0],
-			description='Invited to %s by %s on %s' % (word[0], word[1], word[2]),
-			icon=xchatlogo,
-			sticky=False,
-			priority=0
-		)
-	except: xchat.prnt('Growl Error: Growl is not running.')
+	growlnotify('Invited',
+				'Invited to ' + word[0],
+				'Invited to %s by %s on %s' % (word[0], word[1], word[2]))
 
 def topic_callback(word, word_eol, userdata):
-	try:
-		growl.notify(
-			noteType='Topic Changed',
-			title=word[2] + '\'s topic changed',
-			description='%s \'s topic changed to %s by %s' % (word[2], word[1], word[0]),
-			icon=xchatlogo,
-			sticky=False,
-			priority=-2
-		)
-	except: xchat.prnt('Growl Error: Growl is not running.')
+	growlnotify('Topic Changed',
+				word[2] + '\'s topic changed',
+				'%s \'s topic changed to %s by %s' % (word[2], word[1], word[0]),
+				-2)
 
 def onlinenotify_callback(word, word_eol, userdata):
-	try:
-		growl.notify(
-			noteType='User Online',
-			title=word[0] + ' is online on ' + word[2],
-			description='',
-			icon=xchatlogo,
-			sticky=False,
-			priority=0
-		)
-	except: xchat.prnt('Growl Error: Growl is not running.')
+	growlnotify('User Online',
+				word[0] + ' is online on ' + word[2])
 
 def servernotice_callback(word, word_eol, userdata):
-	try:
-		growl.notify(
-			noteType='Server Notice',
-			title='Notice from ' + word[1],
-			description=word[0],
-			icon=xchatlogo,
-			sticky=False,
-			priority=-1
-		)
-	except: xchat.prnt('Growl Error: Growl is not running.')
+	growlnotify('Server Notice',
+				'Notice from ' + word[1],
+				word[0])
 
 def disconnect_callback(word, word_eol, userdata):
-	try:
-		growl.notify(
-			noteType='Disconnected',
-			title='Disonnected from server',
-			description=word[0],
-			icon=xchatlogo,
-			sticky=False,
-			priority=1
-		)
-	except: xchat.prnt('Growl Error: Growl is not running.')
+	growlnotify('Disconnected',
+				'Disonnected from server',
+				word[0],
+				1)
 
 def killed_callback(word, word_eol, userdata):
-	try:
-		growl.notify(
-			noteType='Killed',
-			title='Killed by ' + word[0],
-			description=word[1],
-			icon=xchatlogo,
-			sticky=False,
-			priority=2
-		)
-	except: xchat.prnt('Growl Error: Growl is not running.')
+	growlnotify('Killed',
+				'Killed by ' + word[0],
+				word[1],
+				2)
 
 def kicked_callback(word, word_eol, userdata):
-	try:
-		growl.notify(
-			noteType='Kicked',
-			title='You have been kicked from ' + word[2],
-			description='Kicked by %s for %s' % (word[1], word[3]),
-			icon=xchatlogo,
-			sticky=False,
-			priority=1
-		)
-	except: xchat.prnt('Growl Error: Growl is not running.')
+	growlnotify('Kicked',
+				'You have been kicked from ' + word[2],
+				'Kicked by %s for %s' % (word[1], word[3]),
+				1)
 
 def banned_callback(word, word_eol, userdata):
 	# this now works on a basic level, will possibly be improved
@@ -227,16 +162,8 @@ def banned_callback(word, word_eol, userdata):
 	hostip = re.split('@', userhost)[1]
 
 	if re.search(nick, word[1]) or re.search(hostip, word[1]):
-		try:
-			growl.notify(
-				noteType='Banned',
-				title='You have been banned by ' + word[0],
-				description='',
-				icon=xchatlogo,
-				sticky=False,
-				priority=1
-			)
-		except: xchat.prnt('Growl Error: Growl is not running.')
+		growlnotify('Banned',
+		'You have been banned by ' + word[0])
 
 # get events from xchat to call notifications
 xchat.hook_print("Channel Msg Hilight", hilight_callback)
@@ -250,3 +177,5 @@ xchat.hook_print("Topic Change", topic_callback)
 xchat.hook_print("You Kicked", kicked_callback)
 xchat.hook_print("Killed", killed_callback)
 xchat.hook_print("Channel Ban", banned_callback)
+# Nothing broke yet, its loaded! =)
+xchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.')
