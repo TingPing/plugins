@@ -1,1 +1,0 @@
-This plugin is intended to get info from or configure a teamspeak 3 server such as current users.
