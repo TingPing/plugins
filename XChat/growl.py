@@ -1,11 +1,10 @@
 # -*- coding: utf-8; tab-width: 4; -*-
 
-__module_name__='Growl for XChat'
-__module_description__='Growl for Windows support for XChat-WDK' 
+__module_name__='Growl'
+__module_description__='Growl notification support'
+__module_author__='TingPing'
 __module_version__='13'
 
-#in theory works on any platform for growl but only tested on windows with wdk
-#requires https://github.com/kfdm/gntp
 import re
 from time import time
 
@@ -51,6 +50,7 @@ def growlnotify(_type, title, desc='', pri=0):
 		)
 	except: 
 		xchat.prnt('Growl Error: Growl is not running.')
+	return None
 
 
 # now checks for and ignores mass hilights, performance impact not yet tested, maybe removed, optional, or only used on small channels
