@@ -1,0 +1,4 @@
+Version='0.0.1'
+Authors=['TingPing <tingping@tingping.se>']
+Name=_('Growl')
+Description=_('Growl notifications. Requires GNTP Module: https://github.com/kfdm/gntp')
