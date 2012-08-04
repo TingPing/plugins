@@ -21,8 +21,8 @@ def pithos(word, word_eol, userdata):
 
 	if len(word) > 1:
 		# not very useful?
-		if word[1] == 'playing':
-			xchat.prnt(msg[17:])
+		if word[1] == 'info':
+			xchat.prnt(msg[18:])
 
 		elif word[1] == 'next':
 			player.SkipSong()
@@ -34,9 +34,11 @@ def pithos(word, word_eol, userdata):
 			player.BanCurrentSong()
 
 		else:
-			xchat.prnt('Pithos: Valid commands are playing, next, love, hate, or without args to announce')
+			xchat.prnt('Pithos: Valid commands are: info, next, love, hate, or without args to announce')
 	else:
 		xchat.command(msg)
+	return xchat.EAT_ALL
 
 xchat.hook_command("pithos", pithos)
+# xchat.hook_command("np", pithos)  # enable if you prefer but may conflict
 xchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.')
