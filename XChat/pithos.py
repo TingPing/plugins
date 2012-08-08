@@ -13,7 +13,7 @@ def pithos(word, word_eol, userdata):
 		player = session_bus.get_object('net.kevinmehall.Pithos', '/net/kevinmehall/Pithos')
 	except (dbus.exceptions.DBusException, TypeError):
 		xchat.prnt('Pithos: Could not find player.')
-		return None
+		return xchat.EAT_XCHAT
 
 	song = player.GetCurrentSong()
 	# to be configurable

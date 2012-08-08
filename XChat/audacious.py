@@ -15,7 +15,7 @@ def audacious(word, word_eol, userdata):
 		song = player.GetMetadata()
 	except (dbus.exceptions.DBusException, TypeError):
 		xchat.prnt('Audacious: Could not find player.')
-		return None
+		return xchat.EAT_XCHAT
 
 	try:
 		msg = 'me is now playing %s by %s on %s.'%(song['title'], song['artist'], song['album'])
