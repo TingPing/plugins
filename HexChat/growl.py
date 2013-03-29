@@ -3,14 +3,14 @@
 __module_name__='Growl'
 __module_description__='Growl notification support'
 __module_author__='TingPing'
-__module_version__='14'
+__module_version__='15'
 
 import re
 from time import time
 
 import xchat
 try:
-  import gntp.notifier
+	import gntp.notifier
 except ImportError:
 	xchat.prnt('Growl Error: Please install https://github.com/kfdm/gntp')
 	# Too bad we can't unload here to stop the upcoming errors =(
@@ -41,6 +41,9 @@ except:
 
 
 def growlnotify(_type, title, desc='', pri=0):
+	if xchat.get_prefs('away_omit_alerts') and xchat.get_info('away'):
+		return None
+
 	try:
 		growl.notify(
 			noteType=_type,
