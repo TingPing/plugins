@@ -13,7 +13,7 @@ help_msg = 'Alias: Valid commands are:\n \
 					ALIASES\n \
 					HELP name'
 
-def load_aliases ():
+def load_aliases():
 	for pref in hexchat.list_pluginpref():
 		if pref[:6] == 'alias_':
 			name = pref[6:]
@@ -24,7 +24,7 @@ def get_alias(name):
 	cmd = hexchat.get_pluginpref('alias_' + name)
 	return cmd
 
-def remove_alias(name, quiet=False):
+def remove_alias(name):
 	hexchat.del_pluginpref('alias_' + name)
 	if name in alias_hooks:
 		hook = alias_hooks.get(name)
