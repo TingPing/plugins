@@ -42,7 +42,7 @@ def add_alias(name, cmd):
 		return True
 	return False
 
-
+# FIXME: Prevent recursive commands
 def alias_cmd_cb(word, word_eol, userdata):
 	hexchat.command('%s %s' %(get_alias(word[0]), word_eol[1]))
 	return hexchat.EAT_HEXCHAT
