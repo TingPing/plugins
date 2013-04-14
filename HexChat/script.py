@@ -9,9 +9,9 @@ __module_description__ = "Download scripts"
 #TODO: Error handling, multiple sites, custom urls
 
 script_help = 'Script: Valid commands are:\n \
-  				INSTALL script\n \
-					UPDATE script\n \
-					UNINSTALL script'
+  			INSTALL script\n \
+			UPDATE script\n \
+			UNINSTALL script'
 addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 addon_site = 'http://raw.github.com/TingPing/plugins/master/HexChat/'
 
