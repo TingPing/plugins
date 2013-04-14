@@ -30,6 +30,9 @@ def script_cb(word, word_eol, userdata):
 		urllib.urlretrieve(addon_site + arg, os.path.join(addon_dir, arg))
 		hexchat.command('load ' + arg)
 	elif cmd == 'update':
+		if arg == 'script.py':
+			print('Script: I cannot update myself.')
+			return hexchat.EAT_ALL
 		urllib.urlretrieve(addon_site + arg,os.path.join(addon_dir, arg))
 		hexchat.command('reload ' + arg)
 	elif cmd == 'uninstall':
