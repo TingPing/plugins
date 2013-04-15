@@ -8,7 +8,7 @@ __module_description__ = "Simplifies banning and quieting"
 wasop = False
 
 def do_op(deop=False):
-  global wasop
+	global wasop
 	if not deop:
 		if not 'o' in hexchat.get_info('modes'):
 			wasop = False
