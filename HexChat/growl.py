@@ -169,6 +169,8 @@ def banned_callback(word, word_eol, userdata):
 	for user in xchat.get_list('users'):
 		if xchat.nickcmp(nick, user.nick) == 0:
 			userhost = user.host
+	if not userhost:
+		return None
 	hostip = re.split('@', userhost)[1]
 
 	if re.search(nick, word[1]) or re.search(hostip, word[1]):
