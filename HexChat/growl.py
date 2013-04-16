@@ -5,9 +5,7 @@ __module_description__='Growl notification support'
 __module_author__='TingPing'
 __module_version__='15'
 
-import re
 from time import time
-
 import xchat
 try:
 	import gntp.notifier
@@ -171,9 +169,9 @@ def banned_callback(word, word_eol, userdata):
 			userhost = user.host
 	if not userhost:
 		return None
-	hostip = re.split('@', userhost)[1]
+	hostip = userhost.split('@')[1]
 
-	if re.search(nick, word[1]) or re.search(hostip, word[1]):
+	if nick in word[1] or hostip in word[1]:
 		growlnotify('Banned',
 		'You have been banned by ' + word[0])
 
