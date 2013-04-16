@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = "Banhelper"
 __module_author__ = "TingPing"
-__module_version__ = "0"
+__module_version__ = "1"
 __module_description__ = "Simplifies banning and quieting"
 
 wasop = False
@@ -28,7 +28,7 @@ def get_mask(nick):
 				return '*!*@*%s*' %user.host
 			else:
 				hexchat.command('who %s %%chtsunfra,152' %nick)
-				print('BH: User info not found, try again.')
+				print('BH: User info not found, enable irc_who_join or try again.')
 				return None
 
 def ban_cb(word, word_eol, userdata):
@@ -38,6 +38,9 @@ def ban_cb(word, word_eol, userdata):
 			do_op()
 			if word[0] == 'ban':
 				hexchat.command('mode +b %s' %mask)
+			elif word[0] == 'kickban':
+				hexchat.command('mode +b %s' %mask)
+				hexchat.command('kick %s' %word[1])
 			elif word[0] == 'quiet':
 				hexchat.command('mode +q %s' %mask)
 			do_op(deop=True)
@@ -47,6 +50,7 @@ def ban_cb(word, word_eol, userdata):
 def unload_cb(userdata):
 	print(__module_name__ + ' version ' + __module_version__ + ' unloaded.')
 
+hexchat.hook_command('kickban', ban_cb)
 hexchat.hook_command('ban', ban_cb)
 hexchat.hook_command('quiet', ban_cb)
 hexchat.hook_unload(unload_cb)
