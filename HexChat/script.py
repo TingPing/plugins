@@ -16,7 +16,7 @@ addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 # Store as preference?
 addon_types = ['py', 'pl', 'lua', 'tcl']
 addon_sites = ['http://raw.github.com/TingPing/plugins/master/HexChat/',
-				'https://github.com/Arnavion/random/tree/master/hexchat',
+				'https://raw.github.com/Arnavion/random/master/hexchat/',
 				'http://orvp.net/xchat/',
 				'https://raw.github.com/Xuerian/xchat_overwatch/master/']
 
