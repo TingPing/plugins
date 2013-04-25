@@ -3,17 +3,37 @@ import hexchat
 
 __module_name__ = "Script"
 __module_author__ = "TingPing"
-__module_version__ = "0"
+__module_version__ = "1"
 __module_description__ = "Download scripts"
-
-#TODO: Error handling, multiple sites, custom urls
 
 script_help = 'Script: Valid commands are:\n \
   			INSTALL script\n \
 			UPDATE script\n \
 			UNINSTALL script'
+
 addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
-addon_site = 'http://raw.github.com/TingPing/plugins/master/HexChat/'
+
+# Store as preference?
+addon_types = ['py', 'pl', 'lua', 'tcl']
+addon_sites = ['http://raw.github.com/TingPing/plugins/master/HexChat/',
+				'https://github.com/Arnavion/random/tree/master/hexchat',
+				'http://orvp.net/xchat/',
+				'https://raw.github.com/Xuerian/xchat_overwatch/master/']
+
+def expand_script(script):
+	return os.path.join(addon_dir, script)
+
+def download(script):
+	if script.partition('.')[2] not in addon_types:
+		print('Script: Not a valid script file type')
+		return False
+	for site in addon_sites:
+		if urllib.urlopen(site + script).getcode() == 200:
+			print('Script: Downloading %s...' %script)
+			urllib.urlretrieve(site + script, expand_script(script))
+			return True
+	print('Script: Could not find %s' %script)
+
 
 def script_cb(word, word_eol, userdata):
 	if len(word) > 2:
@@ -24,23 +44,26 @@ def script_cb(word, word_eol, userdata):
 		return hexchat.EAT_ALL
 
 	if cmd == 'install':
-		if os.path.exists(os.path.join(addon_dir, arg)):
+		if os.path.exists(expand_script(arg)):
 			print('Script: %s is already installed.' %arg)
 			return hexchat.EAT_ALL
-		urllib.urlretrieve(addon_site + arg, os.path.join(addon_dir, arg))
-		hexchat.command('load ' + arg)
+		if download(arg):
+			hexchat.command('timer 5 load ' + expand_script(arg))
 	elif cmd == 'update':
 		if arg == 'script.py':
 			print('Script: I cannot update myself.')
 			return hexchat.EAT_ALL
-		urllib.urlretrieve(addon_site + arg,os.path.join(addon_dir, arg))
-		hexchat.command('reload ' + arg)
-	elif cmd == 'uninstall':
+		if download(arg):
+			hexchat.command('timer 5 reload ' + arg)
+	elif cmd == 'remove':
 		if arg == 'script.py':
 			print('Script: I refuse.')
 			return hexchat.EAT_ALL
-		hexchat.command('unload ' + arg)
-		os.remove(os.path.join(addon_dir, arg))
+		if os.path.exists(expand_script(arg)):
+			hexchat.command('unload ' + expand_script(arg))
+			os.remove(expand_script(arg))
+		else:
+			print('Script: %s is not installed' %arg)
 	else:
 		hexchat.command('help script')
 
