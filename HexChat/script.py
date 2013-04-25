@@ -1,4 +1,5 @@
-import os, urllib
+import os
+import urllib, urllib2
 import hexchat
 
 __module_name__ = "Script"
@@ -25,14 +26,16 @@ def expand_script(script):
 
 def download(script):
 	if script.partition('.')[2] not in addon_types:
-		print('Script: Not a valid script file type')
+		print('Script: Not a valid script file type.')
 		return False
 	for site in addon_sites:
-		if urllib.urlopen(site + script).getcode() == 200:
-			print('Script: Downloading %s...' %script)
-			urllib.urlretrieve(site + script, expand_script(script))
-			return True
-	print('Script: Could not find %s' %script)
+		try:
+			if urllib2.urlopen(site + script).getcode() == 200:
+				print('Script: Downloading %s...' %script)
+				urllib.urlretrieve(site + script, expand_script(script))
+				return True
+		except urllib2.HTTPError: pass
+	print('Script: Could not find %s.' %script)
 
 
 def script_cb(word, word_eol, userdata):
@@ -63,7 +66,7 @@ def script_cb(word, word_eol, userdata):
 			hexchat.command('unload ' + expand_script(arg))
 			os.remove(expand_script(arg))
 		else:
-			print('Script: %s is not installed' %arg)
+			print('Script: %s is not installed.' %arg)
 	else:
 		hexchat.command('help script')
 
