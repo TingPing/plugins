@@ -9,7 +9,7 @@ __module_description__ = "Download scripts"
 script_help = 'Script: Valid commands are:\n \
   			INSTALL script\n \
 			UPDATE script\n \
-			UNINSTALL script'
+			REMOVE script'
 
 addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 
