@@ -10,7 +10,7 @@ __module_description__ = "Show word definitions"
 
 def define(word, word_eol, userdata):
 
-  if len(word) >= 2:
+  	if len(word) >= 2:
 		_word = hexchat.strip(word[1])
 		_number = 1
 		if len(word) >= 3:
