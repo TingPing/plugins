@@ -3,7 +3,7 @@
 __module_name__='Growl'
 __module_description__='Growl notification support'
 __module_author__='TingPing'
-__module_version__='15'
+__module_version__='16'
 
 from time import time
 import xchat
@@ -40,6 +40,9 @@ except:
 
 def growlnotify(_type, title, desc='', pri=0):
 	if xchat.get_prefs('away_omit_alerts') and xchat.get_info('away'):
+		return None
+
+	if xchat.get_prefs('gui_focus_omitalerts') and xchat.get_info('win_status') == 'active':
 		return None
 
 	try:
