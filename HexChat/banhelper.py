@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = "Banhelper"
 __module_author__ = "TingPing"
-__module_version__ = "0"
+__module_version__ = "1"
 __module_description__ = "Simplifies banning and quieting"
 
 wasop = False
