@@ -1,10 +1,13 @@
-import os
-import urllib, urllib2
+import os, sys
+if sys.version_info[0] < 3:
+	import urllib
+else:
+	import urllib.request
 import hexchat
 
 __module_name__ = "Script"
 __module_author__ = "TingPing"
-__module_version__ = "1"
+__module_version__ = "2"
 __module_description__ = "Download scripts"
 
 script_help = 'Script: Valid commands are:\n \
@@ -29,13 +32,17 @@ def download(script):
 		print('Script: Not a valid script file type.')
 		return False
 	for site in addon_sites:
-		try:
-			if urllib2.urlopen(site + script).getcode() == 200:
+		if sys.version_info[0] < 3:
+			if urllib.urlopen(site + script).getcode() == 200:
 				print('Script: Downloading %s...' %script)
 				urllib.urlretrieve(site + script, expand_script(script))
 				return True
-		except urllib2.HTTPError: pass
-	print('Script: Could not find %s.' %script)
+		else:
+			if urllib.request.urlopen(site + script).getcode() == 200:
+				print('Script: Downloading %s...' %script)
+				urllib.request.urlretrieve(site + script, expand_script(script))
+				return True
+	print('Script: Could not find %s' %script)
 
 
 def script_cb(word, word_eol, userdata):
