@@ -1,4 +1,8 @@
-import urllib
+import sys
+if int(sys.version[0]) == 2:
+	import urllib as request
+else:
+	import urllib.request as request
 import ast
 import hexchat
 
@@ -10,7 +14,7 @@ __module_description__ = "Show word definitions"
 
 def define(word, word_eol, userdata):
 
-  	if len(word) >= 2:
+	if len(word) >= 2:
 		_word = hexchat.strip(word[1])
 		_number = 1
 		if len(word) >= 3:
@@ -21,7 +25,7 @@ def define(word, word_eol, userdata):
 		return hexchat.EAT_ALL
 
 	url="http://www.google.com/dictionary/json?callback=s&q=" + _word + "&sl=en&tl=en&restrict=pr,de&client=te"
-	obj=urllib.urlopen(url);
+	obj=request.urlopen(url);
 	content=obj.read()
 	obj.close()
 	content=content[2:-10]
