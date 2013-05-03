@@ -6,7 +6,7 @@ __module_version__ = "0"
 __module_description__ = "Properly show your messages in znc playback"
 
 def message_cb(word, word_eol, userdata):
-  if hexchat.nickcmp(word[0], hexchat.get_info('nick')) == 0:
+	if hexchat.nickcmp(word[0], hexchat.get_info('nick')) == 0:
 		hexchat.emit_print('Your Message', word[0], word[1], '', '')
 		return hexchat.EAT_HEXCHAT
 		
