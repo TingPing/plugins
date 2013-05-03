@@ -1,14 +1,14 @@
 import os, sys
 if sys.version_info[0] < 3:
-	import urllib
+	import urllib as request
 else:
-	import urllib.request
+	import urllib.request as request
 import hexchat
 
-__module_name__ = "Script"
-__module_author__ = "TingPing"
-__module_version__ = "2"
-__module_description__ = "Download scripts"
+__module_name__ = 'Script'
+__module_author__ = 'TingPing'
+__module_version__ = '3'
+__module_description__ = 'Download scripts'
 
 script_help = 'Script: Valid commands are:\n \
   			INSTALL script\n \
@@ -32,16 +32,10 @@ def download(script):
 		print('Script: Not a valid script file type.')
 		return False
 	for site in addon_sites:
-		if sys.version_info[0] < 3:
-			if urllib.urlopen(site + script).getcode() == 200:
-				print('Script: Downloading %s...' %script)
-				urllib.urlretrieve(site + script, expand_script(script))
-				return True
-		else:
-			if urllib.request.urlopen(site + script).getcode() == 200:
-				print('Script: Downloading %s...' %script)
-				urllib.request.urlretrieve(site + script, expand_script(script))
-				return True
+		if request.urlopen(site + script).getcode() == 200:
+			print('Script: Downloading %s...' %script)
+			request.urlretrieve(site + script, expand_script(script))
+			return True
 	print('Script: Could not find %s' %script)
 
 
@@ -63,7 +57,7 @@ def script_cb(word, word_eol, userdata):
 		if arg == 'script.py':
 			print('Script: I cannot update myself.')
 			return hexchat.EAT_ALL
-		if download(arg):
+		if os.path.exists(expand_script(arg)) and download(arg):
 			hexchat.command('timer 5 reload ' + arg)
 	elif cmd == 'remove':
 		if arg == 'script.py':
@@ -82,6 +76,6 @@ def script_cb(word, word_eol, userdata):
 def unload_callback(userdata):
 	print(__module_name__ + ' version ' + __module_version__ + ' unloaded.')
 
-hexchat.hook_command("script", script_cb, help=script_help)
+hexchat.hook_command('script', script_cb, help=script_help)
 hexchat.hook_unload(unload_callback)
 hexchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.')
