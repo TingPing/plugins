@@ -35,7 +35,7 @@ def get_mask(nick):
 			if user.account:
 				return '$a:{}'.format(user.account)
 			elif user.host:
-				return '*!*@*{}*'.format(user.host)
+				return '*!*@*{}*'.format(user.host.split('@')[1])
 			else:
 				hexchat.command('whois {}'.format(nick))
 				print('BH: User info not found, enable irc_who_join or try again.')
