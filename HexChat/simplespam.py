@@ -15,7 +15,7 @@ def chan_cb(word, word_eol, userdata):
         spamcount += 1
         if spamcount > 2:
             hexchat.command('ignore %s CHAN' %hexchat.strip(word[0]))
-        return xchat.EAT_XCHAT
+        return hexchat.EAT_HEXCHAT
     else:
         lastmsg = word[1]
         spamcount = 0
