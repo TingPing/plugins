@@ -14,7 +14,7 @@ def part_cb(word, word_eol, userdata):
 		if user.nick == word[0]:
 			if time() - user.lasttalk > 60 * 5:
 				return hexchat.EAT_HEXCHAT
-			else
+			else:
 				return hexchat.EAT_NONE
 
 
