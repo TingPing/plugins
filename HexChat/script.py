@@ -22,8 +22,7 @@ addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 addon_types = ['py', 'pl', 'lua', 'tcl']
 addon_sites = ['http://raw.github.com/TingPing/plugins/master/HexChat/',
 				'https://raw.github.com/Arnavion/random/master/hexchat/',
-				'http://orvp.net/xchat/',
-				'https://raw.github.com/Xuerian/xchat_overwatch/master/']
+				'http://orvp.net/xchat/']
 
 
 def expand_script(script):
