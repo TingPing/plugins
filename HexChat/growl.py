@@ -11,7 +11,7 @@ try:
 	import gntp.notifier
 except ImportError:
 	xchat.prnt('Growl Error: Please install https://github.com/kfdm/gntp')
-	# Too bad we can't unload here to stop the upcoming errors =(
+	xchat.command('timer 0.1 unload growl.py')
 
 hexchatlogo = 'https://raw.github.com/hexchat/hexchat/master/src/pixmaps/hexchat.png'
 lasttime = time()
