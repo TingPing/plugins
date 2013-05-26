@@ -1,5 +1,3 @@
-# -*- coding: utf-8; tab-width: 4; -*-
-
 __module_name__='Growl'
 __module_description__='Growl notification support'
 __module_author__='TingPing'
@@ -10,7 +8,7 @@ import xchat
 try:
 	import gntp.notifier
 except ImportError:
-	xchat.prnt('Growl Error: Please install https://github.com/kfdm/gntp')
+	xchat.prnt('\002\00304Growl Error:\017 Please install \037https://github.com/kfdm/gntp\017')
 	xchat.command('timer 0.1 unload growl.py')
 
 hexchatlogo = 'https://raw.github.com/hexchat/hexchat/master/src/pixmaps/hexchat.png'
