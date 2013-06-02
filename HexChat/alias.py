@@ -5,7 +5,6 @@ __module_author__ = "TingPing"
 __module_version__ = "1"
 __module_description__ = "Create aliases for commands"
 
-alias_hooks = {}
 help_msg = 'Alias: Valid commands are:\n \
 					ALIAS name command\n \
 					UNALIAS name\n \
@@ -13,28 +12,21 @@ help_msg = 'Alias: Valid commands are:\n \
 					HELP name'
 
 def load_aliases ():
-	for pref in hexchat.list_pluginpref():
-		if pref[:6] == 'alias_':
-			name = pref[6:]
-			hook = hexchat.hook_command(name, alias_cmd_cb, help='Alias: "%s" is an alias for "%s"' %(name, get_alias(name)))
-			alias_hooks[name] = hook
+	for name in hexchat.list_pluginpref():
+		hook = hexchat.hook_command(name, alias_cmd_cb, help='Alias: "%s" is an alias for "%s"' %(name, get_alias(name)))
 
 def get_alias(name):
-	cmd = hexchat.get_pluginpref('alias_' + name)
+	cmd = hexchat.get_pluginpref(name)
 	return cmd
 
 def remove_alias(name, quiet=False):
-	hexchat.del_pluginpref('alias_' + name)
-	if name in alias_hooks:
-		hook = alias_hooks.get(name)
-		hexchat.unhook(hook)
-		del alias_hooks[name]
-		return True
-	return False
+	hexchat.del_pluginpref(name)
+	hexchat.unhook(name)
+	return True
 
 
 def add_alias(name, cmd):
-	hexchat.set_pluginpref('alias_' + name, cmd)
+	hexchat.set_pluginpref(name, cmd)
 	hook = hexchat.hook_command(name, alias_cmd_cb, help='Alias: "%s" is an alias for "%s"' %(name, get_alias(name)))
 	alias_hooks[name] = hook
 	if hook:
@@ -76,8 +68,7 @@ def alias_cb(word, word_eol, userdata):
 def aliases_cb(word, word_eol, userdata):
 	print('\026NAME\t\t\t\tCMD                                                     ')
 	for pref in hexchat.list_pluginpref():
-		if pref[:6] == 'alias_':
-			print('%s\t\t\t%s' %(pref[6:], get_alias(pref[6:])))
+		print('%s\t\t\t%s' %(pref, get_alias(pref)))
 	return hexchat.EAT_ALL
 		
 def unload_callback(userdata):
