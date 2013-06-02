@@ -19,7 +19,7 @@ script_help = 'Script: Valid commands are:\n \
 addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 
 # Store as preference?
-addon_types = ['py', 'pl', 'lua', 'tcl']
+addon_types = ['py', 'pl', 'lua', 'tcl', 'js']
 addon_sites = ['http://raw.github.com/TingPing/plugins/master/HexChat/',
 				'https://raw.github.com/Arnavion/random/master/hexchat/',
 				'http://orvp.net/xchat/']
