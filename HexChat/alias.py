@@ -12,24 +12,25 @@ help_msg = 'Alias: Valid commands are:\n \
 					HELP name'
 
 def load_aliases ():
-	for name in hexchat.list_pluginpref():
-		hook = hexchat.hook_command(name, alias_cmd_cb, help='Alias: "%s" is an alias for "%s"' %(name, get_alias(name)))
+	for pref in hexchat.list_pluginpref():
+		if pref[:6] == 'alias_':
+			name = pref[6:]
+			hexchat.hook_command(name, alias_cmd_cb, help='Alias: "%s" is an alias for "%s"' %(name, get_alias(name)))
 
 def get_alias(name):
-	cmd = hexchat.get_pluginpref(name)
+	cmd = hexchat.get_pluginpref('alias_' + name)
 	return cmd
 
 def remove_alias(name, quiet=False):
-	hexchat.del_pluginpref(name)
-	hexchat.unhook(name)
-	return True
+	hexchat.del_pluginpref('alias_' + name)
+	if hexchat.unhook(hook):
+		return True
+	return False
 
 
 def add_alias(name, cmd):
-	hexchat.set_pluginpref(name, cmd)
-	hook = hexchat.hook_command(name, alias_cmd_cb, help='Alias: "%s" is an alias for "%s"' %(name, get_alias(name)))
-	alias_hooks[name] = hook
-	if hook:
+	hexchat.set_pluginpref('alias_' + name, cmd)
+	if hexchat.hook_command(name, alias_cmd_cb, help='Alias: "%s" is an alias for "%s"' %(name, get_alias(name))):
 		return True
 	return False
 
@@ -68,7 +69,8 @@ def alias_cb(word, word_eol, userdata):
 def aliases_cb(word, word_eol, userdata):
 	print('\026NAME\t\t\t\tCMD                                                     ')
 	for pref in hexchat.list_pluginpref():
-		print('%s\t\t\t%s' %(pref, get_alias(pref)))
+		if pref[:6] == 'alias_':
+			print('%s\t\t\t%s' %(pref[6:], get_alias(pref[6:])))
 	return hexchat.EAT_ALL
 		
 def unload_callback(userdata):
