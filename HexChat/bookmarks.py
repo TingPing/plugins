@@ -6,10 +6,11 @@ __module_version__ = "1"
 __module_description__ = "Bookmark channels to easily rejoin them."
 
 def get_network(name):
-	net = hexchat.get_pluginpref('bookmark_' + name)
-	return net
+	return hexchat.get_pluginpref('bookmark_' + name)
 
 def load_bookmarks():
+	hexchat.command('menu -p-2 add "$TAB/Bookmark" "bookmark %s"')
+	hexchat.command('menu add "$CHAN/Bookmark Channel" "bookmark %s"')
 	hexchat.command('menu -p3 add "Bookmarks"')
 	hexchat.command('menu add "Bookmarks/-"')
 	hexchat.command('menu add "Bookmarks/Add or Remove Current Channel" "bookmark"')
@@ -43,8 +44,7 @@ def netjoin_cb(word, word_eol, userdata):
 
 	for chan in hexchat.get_list('channels'):
 		if chan.network == joinnet:
-			chan.context.set()
-			hexchat.command('join {}'.format(joinchan))
+			chan.context.command('join {}'.format(joinchan))
 			return hexchat.EAT_ALL
 
 	# Not found, connect to network automatically.
@@ -61,7 +61,7 @@ def bookmark_cb(word, word_eol, userdata):
 	except IndexError:
 		pass
 
-	toggle_bookmark (chan, net)
+	toggle_bookmark(chan, net)
 
 	return hexchat.EAT_ALL
 		
@@ -75,6 +75,4 @@ hexchat.hook_command("bookmark", bookmark_cb, help='Usage: bookmark [channel] [n
 hexchat.hook_command("netjoin", netjoin_cb, help='netjoin <channel> <network>')
 hexchat.hook_unload(unload_callback)
 load_bookmarks()
-hexchat.command('menu -p-2 add "$TAB/Bookmark" "bookmark %s"')
-hexchat.command('menu add "$CHAN/Bookmark Channel" "bookmark %s"')
 print(__module_name__ + ' version ' + __module_version__ + ' loaded.')
