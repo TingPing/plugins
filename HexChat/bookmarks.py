@@ -29,7 +29,7 @@ def toggle_bookmark(chan, net): # It's a toggle because /menu sucks
 		except AttributeError:
 			net = hexchat.get_info('network')
 
-	if get_network(chan) != None:
+	if get_network(chan) == net:
 		hexchat.del_pluginpref('bookmark_' + chan)
 		hexchat.command('menu del "Bookmarks/{}/{}"'.format(net, chan))
 	else:
