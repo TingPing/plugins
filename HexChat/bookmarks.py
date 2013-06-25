@@ -6,7 +6,7 @@ __module_version__ = "1"
 __module_description__ = "Bookmark channels to easily rejoin them."
 
 def get_network(name):
-  net = hexchat.get_pluginpref('bookmark_' + name)
+	net = hexchat.get_pluginpref('bookmark_' + name)
 	return net
 
 def load_bookmarks():
