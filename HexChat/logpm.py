@@ -10,6 +10,7 @@ def open_cb(word, word_eol, userdata):
 	# Assume nick if not prefixed with #
 	# Use existing pref for nicks I usually ignore (i.e. chanserv)
 	if chan and chan[0] != '#' and chan != '>>python<<' and chan not in hexchat.get_prefs('irc_no_hilight'):
-		hexchat.command('chanopt text_logging on')
+		hexchat.command('chanopt -quiet text_logging on')
+		hexchat.command('chanopt -quiet text_scrollback on')
 
 hexchat.hook_print("Open Context", open_cb)
