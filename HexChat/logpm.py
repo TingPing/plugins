@@ -13,7 +13,7 @@ def open_cb(word, word_eol, userdata):
 	if chan and chan[0] != '#' \
 		and chan[0] != '*' \
 		and chan != '>>python<<' \
-		and chan not in hexchat.get_prefs('irc_no_hilight'):
+		and chan not in hexchat.get_prefs('irc_no_hilight').split(','):
 		hexchat.command('chanopt -quiet text_logging on')
 		hexchat.command('chanopt -quiet text_scrollback on')
 
