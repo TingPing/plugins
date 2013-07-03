@@ -46,8 +46,8 @@ def growlnotify(_type, title, desc='', pri=0):
 	try:
 		growl.notify(
 			noteType=_type,
-			title=title,
-			description=desc,
+			title=xchat.strip(title),
+			description=xchat.strip(desc),
 			icon=hexchatlogo,
 			sticky=False,
 			priority=pri
