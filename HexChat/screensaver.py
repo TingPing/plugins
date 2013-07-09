@@ -12,7 +12,7 @@ __module_version__ = '1'
 __module_description__ = 'Sets user away when the GNOME screensaver is activated'
 
 def screensaver_cb(state):
-  if state:
+	if state:
 		hexchat.command('allserv away')
 	else:
 		hexchat.command('allserv back')
