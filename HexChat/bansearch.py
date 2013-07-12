@@ -34,6 +34,7 @@ def match_extban(mask, host, account, realname, usermask):
 	else:
 		invert = False
 
+	# From http://freenode.net/using_the_network.shtml
 	if 'a' in extban:
 		ret = banmask == account
 	elif 'r' in extban:
@@ -49,7 +50,7 @@ def match_extban(mask, host, account, realname, usermask):
 		return ret
 
 def get_user_info(nick):
-	invalid_chars = ['*', '?', '$']
+	invalid_chars = ['*', '?', '$', '@', '!']
 	if any(char in nick for char in invalid_chars):
 		return (None, None, None) # It's a mask not a nick.
 
