@@ -125,8 +125,8 @@ def endquietlist_cb(word, word_eol, usermask):
 
 	if quietlist:
 		for mask in quietlist:
-			if mask[0] == '$' and host: # If extquiet we need user info
-				if match_extquiet (mask, host, account, realname, usermask):
+			if mask[0] == '$' and host: # If extban we need user info
+				if match_extban (mask, host, account, realname, usermask):
 					matchlist.append(mask)
 					matchnum = matchnum + 1
 			elif match_mask (mask, usermask):
