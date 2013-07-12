@@ -54,8 +54,10 @@ def ban_cb(word, word_eol, userdata):
 			elif word[0] == 'quiet':
 				hexchat.command('timer .3 mode +q {}'.format(mask))
 			do_op(deop=True)
-			
-	return hexchat.EAT_HEXCHAT
+
+		return hexchat.EAT_HEXCHAT
+	else:			
+		return hexchat.EAT_NONE
 		
 def unload_cb(userdata):
 	print(__module_name__ + ' version ' + __module_version__ + ' unloaded.')
