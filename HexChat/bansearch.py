@@ -35,22 +35,18 @@ def match_extban(mask, host, account, realname, usermask):
 		invert = False
 
 	if 'a' in extban:
-		if invert:
-			return banmask != account
-		else:
-			return banmask == account
+		ret = banmask == account
 	elif 'r' in extban:
-		if invert:
-			return banmask != realname
-		else:
-			return banmask == realname
+		ret = banmask == realname
 	elif 'x' in extban:
-		if invert:
-			return match_mask ('{}#{}'.format(host, realname), banmask) == False
-		else:
-			return match_mask ('{}#{}'.format(host, realname), banmask)
+		ret = match_mask ('{}#{}'.format(host, realname), banmask)
 	else:
 		return False
+
+	if invert:
+		return not ret
+	else:
+		return ret
 
 def get_user_info(nick):
 	invalid_chars = ['*', '?', '$']
@@ -63,7 +59,6 @@ def get_user_info(nick):
 			account = user.account
 			realname = user.realname
 			return (host, account, realname)
-
 
 def banlist_cb(word, word_eol, userdata):
 	global banlist
@@ -78,9 +73,8 @@ def endbanlist_cb(word, word_eol, usermask):
 	matchnum = 0
 
 	# Cleanup hooks
-	if banhook:
-		hexchat.unhook(banhook)
-		banhook = 0
+	hexchat.unhook(banhook)
+	banhook = 0
 	hexchat.unhook(endbanhook)
 	endbanhook = 0
 
@@ -115,9 +109,8 @@ def endquietlist_cb(word, word_eol, usermask):
 	matchnum = 0
 
 	# Cleanup hooks
-	if quiethook:
-		hexchat.unhook(quiethook)
-		quiethook = 0
+	hexchat.unhook(quiethook)
+	quiethook = 0
 	hexchat.unhook(endquiethook)
 	endquiethook = 0
 
@@ -146,13 +139,16 @@ def search_cb(word, word_eol, userdata):
 	global endquiethook
 
 	if len(word) == 2:
-		banhook = hexchat.hook_server ('367', banlist_cb)
-		quiethook = hexchat.hook_server ('728', quietlist_cb)
-		endbanhook = hexchat.hook_server ('368', endbanlist_cb, word[1])
-		endquiethook = hexchat.hook_server ('729', endquietlist_cb, word[1])
+		if not banhook and not quiethook:
+			banhook = hexchat.hook_server ('367', banlist_cb)
+			quiethook = hexchat.hook_server ('728', quietlist_cb)
+			endbanhook = hexchat.hook_server ('368', endbanlist_cb, word[1])
+			endquiethook = hexchat.hook_server ('729', endquietlist_cb, word[1])
 
-		hexchat.command('ban')
-		hexchat.command('quiet')
+			hexchat.command('ban')
+			hexchat.command('quiet')
+		else:
+			print('A ban search is already in progress.')
 
 	else:
 		hexchat.command('help bansearch')
