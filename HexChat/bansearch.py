@@ -20,7 +20,7 @@ def print_result(mask, matchlist, matchnum, _type):
 		for match in matchlist:
 			print('\t\t\t{}'.format(match))
 	else:
-		print('No {} matches for {} were found.'.format(_type, mask))
+		print('No {} matches for \00318{}\017 were found.'.format(_type, mask))
 
 def match_mask(mask, searchmask):
 	# The fnmatch function works for * and ?, to be replaced by a more irc friendly version...
