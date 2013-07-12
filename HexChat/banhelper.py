@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = "Banhelper"
 __module_author__ = "TingPing"
-__module_version__ = "2"
+__module_version__ = "3"
 __module_description__ = "Simplifies banning and quieting"
 
 wasop = False
@@ -30,6 +30,10 @@ def do_op(deop=False):
 			hexchat.command('timer .5 cs deop {}'.format(chan))
 		
 def get_mask(nick):
+	invalid_chars = ['*', '?', '!', '@']
+	if any(char in nick for char in invalid_chars):
+		return False # It's already a mask.
+
 	for user in hexchat.get_list('users'):
 		if user.nick == nick:
 			if user.account:
@@ -54,8 +58,10 @@ def ban_cb(word, word_eol, userdata):
 			elif word[0] == 'quiet':
 				hexchat.command('timer .3 mode +q {}'.format(mask))
 			do_op(deop=True)
-
-		return hexchat.EAT_HEXCHAT
+		elif mask is False:
+			return hexchat.EAT_NONE
+		else:
+			return hexchat.EAT_HEXCHAT
 	else:			
 		return hexchat.EAT_NONE
 		
