@@ -46,9 +46,9 @@ def match_extban(mask, host, account, realname, usermask):
 			return banmask == realname
 	elif 'x' in extban:
 		if invert:
-			return match_mask ('{}#{}'.format(mask, realname), usermask) == False
+			return match_mask ('{}#{}'.format(host, realname), banmask) == False
 		else:
-			return match_mask ('{}#{}'.format(mask, realname), usermask)
+			return match_mask ('{}#{}'.format(host, realname), banmask)
 	else:
 		return False
 
