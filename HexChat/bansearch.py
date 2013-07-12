@@ -15,12 +15,12 @@ banlist = []
 quietlist = []
 
 def print_result(mask, matchlist, matchnum, _type):
-  if matchnum:
+	if matchnum:
 		print('\00318{}\017 had \00320{}\017 {} matches:'.format(mask, matchnum, _type))
 		for match in matchlist:
 			print('\t\t\t{}'.format(match))
 	else:
-		print('No matches for {} were found.'.format(mask))
+		print('No {} matches for {} were found.'.format(_type, mask))
 
 def match_mask(mask, searchmask):
 	# The fnmatch function works for * and ?, to be replaced by a more irc friendly version...
