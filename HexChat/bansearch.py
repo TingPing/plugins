@@ -23,6 +23,8 @@ def print_result(mask, matchlist, matchnum, _type):
 		print('No {} matches for \00318{}\017 were found.'.format(_type, mask))
 
 def match_mask(mask, searchmask):
+	if searchmask is None:
+		return False
 	# The fnmatch function works for * and ?, to be replaced by a more irc friendly version...
 	return fnmatch.fnmatch(mask, searchmask)
 
@@ -40,9 +42,9 @@ def match_extban(mask, host, account, realname, usermask):
 
 	# From http://freenode.net/using_the_network.shtml
 	if 'a' in extban:
-		ret = banmask == account
+		ret = match_mask (account, banmask)
 	elif 'r' in extban:
-		ret = banmask == realname
+		ret = match_mask (realname, banmask)
 	elif 'x' in extban:
 		ret = match_mask ('{}#{}'.format(host, realname), banmask)
 	else:
@@ -64,6 +66,8 @@ def get_user_info(nick):
 			account = user.account
 			realname = user.realname
 			return (host, account, realname)
+
+	return (None, None, None)
 
 def banlist_cb(word, word_eol, userdata):
 	global banlist
@@ -144,7 +148,8 @@ def search_cb(word, word_eol, userdata):
 	global endquiethook
 
 	if len(word) == 2:
-		if not banhook and not quiethook:
+		hooks = [quiethook, banhook, endquiethook, endbanhook]
+		if not any(hook for hook in hooks):
 			banhook = hexchat.hook_server ('367', banlist_cb)
 			quiethook = hexchat.hook_server ('728', quietlist_cb)
 			endbanhook = hexchat.hook_server ('368', endbanlist_cb, word[1])
