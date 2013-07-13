@@ -27,7 +27,11 @@ def match_mask(mask, searchmask):
 	return fnmatch.fnmatch(mask, searchmask)
 
 def match_extban(mask, host, account, realname, usermask):
-	extban, banmask = mask.split(':')
+	try:
+		extban, banmask = mask.split(':')
+	except ValueError:
+		extban = mask
+		banmask = '*'
 
 	if '~' in extban:
 		invert = True
