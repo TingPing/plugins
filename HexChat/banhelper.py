@@ -60,8 +60,7 @@ def ban_cb(word, word_eol, userdata):
 			do_op(deop=True)
 		elif mask is False:
 			return hexchat.EAT_NONE
-		else:
-			return hexchat.EAT_HEXCHAT
+		return hexchat.EAT_HEXCHAT
 	else:			
 		return hexchat.EAT_NONE
 		
