@@ -32,7 +32,7 @@ def do_op(deop=False):
 def get_mask(nick):
 	invalid_chars = ['*', '?', '!', '@']
 	if any(char in nick for char in invalid_chars):
-		return False # It's already a mask.
+		return nick # It's already a mask.
 
 	for user in hexchat.get_list('users'):
 		if user.nick == nick:
@@ -58,8 +58,6 @@ def ban_cb(word, word_eol, userdata):
 			elif word[0] == 'quiet':
 				hexchat.command('timer .3 mode +q {}'.format(mask))
 			do_op(deop=True)
-		elif mask is False:
-			return hexchat.EAT_NONE
 		return hexchat.EAT_HEXCHAT
 	else:			
 		return hexchat.EAT_NONE
