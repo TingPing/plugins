@@ -1,5 +1,5 @@
-import fnmatch
 import hexchat
+import re
 
 __module_name__ = 'BanSearch'
 __module_author__ = 'TingPing'
@@ -14,6 +14,10 @@ endquiethook = 0
 banlist = []
 quietlist = []
 
+patterns = {'?': ".", '*': ".*", # translate wildcards to regex
+            '{': r"\[", '}': r"\]", '|': r"\\", # IRC nick substitutions
+            '[': r"\[", ']': r"\]", '$': r"\$"} # regex escapes
+
 def print_result(mask, matchlist, matchnum, _type):
 	if matchnum:
 		print('\00318{}\017 had \00320{}\017 {} matches:'.format(mask, matchnum, _type))
@@ -25,8 +29,10 @@ def print_result(mask, matchlist, matchnum, _type):
 def match_mask(mask, searchmask):
 	if searchmask is None:
 		return False
-	# The fnmatch function works for * and ?, to be replaced by a more irc friendly version...
-	return fnmatch.fnmatch(mask, searchmask)
+	for match, repl in patterns.items():
+		searchmask = searchmask.replace(match, repl)
+	pattern = re.compile(searchmask.lower())
+	return pattern.match(mask.lower())
 
 def match_extban(mask, host, account, realname, usermask):
 	try:
@@ -167,3 +173,4 @@ def search_cb(word, word_eol, userdata):
 
 hexchat.hook_command('bansearch', search_cb, help='BANSEARCH <mask|nick>')
 hexchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.')
+
