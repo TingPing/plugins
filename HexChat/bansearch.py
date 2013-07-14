@@ -97,13 +97,16 @@ def endbanlist_cb(word, word_eol, usermask):
 
 	if banlist:
 		for mask in banlist:
-			if mask[0] == '$' and host: # If extban we need user info
+			# Regular mask comparison if ban not extban or search is an extban
+			if mask[0] != '$' or (mask[0] == '$' and usermask[0] == '$'):
+				if match_mask (mask, usermask):
+					matchlist.append(mask)
+					matchnum = matchnum + 1
+			elif host: # If extban we need user info
 				if match_extban (mask, host, account, realname, usermask):
 					matchlist.append(mask)
 					matchnum = matchnum + 1
-			elif match_mask (mask, usermask):
-				matchlist.append(mask)
-				matchnum = matchnum + 1
+			# Handle not having user info?
 
 		banlist = []
 
@@ -133,13 +136,16 @@ def endquietlist_cb(word, word_eol, usermask):
 
 	if quietlist:
 		for mask in quietlist:
-			if mask[0] == '$' and host: # If extban we need user info
+			# Regular mask comparison if ban not extban or search is an extban
+			if mask[0] != '$' or (mask[0] == '$' and usermask[0] == '$'):
+				if match_mask (mask, usermask):
+					matchlist.append(mask)
+					matchnum = matchnum + 1
+			elif host: # If extban we need user info
 				if match_extban (mask, host, account, realname, usermask):
 					matchlist.append(mask)
 					matchnum = matchnum + 1
-			elif match_mask (mask, usermask):
-				matchlist.append(mask)
-				matchnum = matchnum + 1
+			# Handle not having user info?
 
 		quietlist = []
 
