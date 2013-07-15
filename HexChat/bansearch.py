@@ -16,7 +16,7 @@ quietlist = []
 
 patterns = {'?': ".", '*': ".*", # translate wildcards to regex
             '{': r"\[", '}': r"\]", '|': r"\\", # IRC nick substitutions
-            '[': r"\[", ']': r"\]", '$': r"\$"} # regex escapes
+            '[': r"\[", ']': r"\]", '$': r"\$", '.':r"\.", '!':r"\!"} # regex escapes
 
 def print_result(mask, matchlist, matchnum, _type):
 	if matchnum:
@@ -68,7 +68,7 @@ def get_user_info(nick):
 
 	for user in hexchat.get_list('users'):
 		if user.nick == nick:
-			host = user.host
+			host = user.nick + '!' + user.host
 			account = user.account
 			realname = user.realname
 			return (host, account, realname)
@@ -97,16 +97,20 @@ def endbanlist_cb(word, word_eol, usermask):
 
 	if banlist:
 		for mask in banlist:
-			# Regular mask comparison if ban not extban or search is an extban
-			if mask[0] != '$' or (mask[0] == '$' and usermask[0] == '$'):
-				if match_mask (mask, usermask):
-					matchlist.append(mask)
-					matchnum = matchnum + 1
-			elif host: # If extban we need user info
+			# If extban we require userinfo or are searching for extban
+			if mask[0] == '$' and (host or usermask[0] == '$'):
 				if match_extban (mask, host, account, realname, usermask):
 					matchlist.append(mask)
 					matchnum = matchnum + 1
-			# Handle not having user info?
+			else:
+				if host: # Was given a user
+					if match_mask (mask, host):
+						matchlist.append(mask)
+						matchnum = matchnum + 1
+				else: # Was given a mask or no userinfo found
+					if match_mask (mask, usermask):
+						matchlist.append(mask)
+						matchnum = matchnum + 1
 
 		banlist = []
 
@@ -136,16 +140,20 @@ def endquietlist_cb(word, word_eol, usermask):
 
 	if quietlist:
 		for mask in quietlist:
-			# Regular mask comparison if ban not extban or search is an extban
-			if mask[0] != '$' or (mask[0] == '$' and usermask[0] == '$'):
-				if match_mask (mask, usermask):
-					matchlist.append(mask)
-					matchnum = matchnum + 1
-			elif host: # If extban we need user info
+			# If extban we require userinfo or are searching for extban
+			if mask[0] == '$' and (host or usermask[0] == '$'):
 				if match_extban (mask, host, account, realname, usermask):
 					matchlist.append(mask)
 					matchnum = matchnum + 1
-			# Handle not having user info?
+			else:
+				if host: # Was given a user
+					if match_mask (mask, host):
+						matchlist.append(mask)
+						matchnum = matchnum + 1
+				else: # Was given a mask or no userinfo found
+					if match_mask (mask, usermask):
+						matchlist.append(mask)
+						matchnum = matchnum + 1
 
 		quietlist = []
 
