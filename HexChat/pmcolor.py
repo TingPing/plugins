@@ -6,7 +6,7 @@ __module_description__ = "Color PM tabs like Hilights"
 import xchat
 
 def pm_cb(word, word_eol, userdata):
-  xchat.command('GUI COLOR 3')
+	xchat.command('GUI COLOR 3')
 	return None
 
 xchat.hook_print("Private Message to Dialog", pm_cb)
