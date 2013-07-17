@@ -21,7 +21,7 @@ addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 # Store as preference?
 addon_types = ['py', 'pl', 'lua', 'tcl', 'js']
 addon_sites = ['http://raw.github.com/TingPing/plugins/master/HexChat/',
-				'https://raw.github.com/Arnavion/random/master/hexchat/',
+				'http://raw.github.com/Arnavion/random/master/hexchat/',
 				'http://orvp.net/xchat/']
 
 
@@ -54,13 +54,13 @@ def script_cb(word, word_eol, userdata):
 			print('Script: {} is already installed.'.format(arg))
 			return hexchat.EAT_ALL
 		if download(arg):
-			hexchat.command('timer 5 load ' + expand_script(arg))
+			hexchat.command('timer 1 load ' + expand_script(arg))
 	elif cmd == 'update':
 		if arg == 'script.py':
 			print('Script: I cannot update myself.')
 			return hexchat.EAT_ALL
 		if os.path.exists(expand_script(arg)) and download(arg):
-			hexchat.command('timer 5 reload ' + arg)
+			hexchat.command('timer 1 reload ' + arg)
 	elif cmd == 'remove':
 		if arg == 'script.py':
 			print('Script: I refuse.')
