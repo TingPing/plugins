@@ -61,6 +61,8 @@ def script_cb(word, word_eol, userdata):
 			return hexchat.EAT_ALL
 		if os.path.exists(expand_script(arg)) and download(arg):
 			hexchat.command('timer 1 reload ' + arg)
+	elif cmd == 'edit':
+		hexchat.command('url ' + expand_script(arg))
 	elif cmd == 'remove':
 		if arg == 'script.py':
 			print('Script: I refuse.')
