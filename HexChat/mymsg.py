@@ -22,7 +22,7 @@ def privmsg_cb(word, word_eol, userdata, attrs):
 			msg = msg.strip('\001')
 			hexchat.emit_print('Your Action', mynick, msg.strip(), time=attrs.time)
 		else:
-			hexchat.emit_print_at('Your Message', mynick, msg, time=attrs.time)
+			hexchat.emit_print('Your Message', mynick, msg, time=attrs.time)
 
 		return hexchat.EAT_ALL
 
