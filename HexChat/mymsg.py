@@ -20,9 +20,9 @@ def privmsg_cb(word, word_eol, userdata, attrs):
 		if '\001ACTION' in msg:
 			msg = msg.strip('\001ACTION')
 			msg = msg.strip('\001')
-			hexchat.emit_print_at(attrs.time, 'Your Action', mynick, msg.strip())
+			hexchat.emit_print('Your Action', mynick, msg.strip(), time=attrs.time)
 		else:
-			hexchat.emit_print_at(attrs.time, 'Your Message', mynick, msg)
+			hexchat.emit_print_at('Your Message', mynick, msg, time=attrs.time)
 
 		return hexchat.EAT_ALL
 
