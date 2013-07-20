@@ -112,7 +112,11 @@ def np_cb(word, word_eol, userdata):
 				except ValueError:
 					print('NP: Setting must be a 1 or 0')
 	else:
-		default = hexchat.get_pluginpref('np_default').lower()
+		if hexchat.get_pluginpref('np_default'):
+			default = hexchat.get_pluginpref('np_default').lower()
+		else:
+			print('NP: No valid default set, use /np default <player> to set one')
+			return hexchat.EAT_ALL	
 		if default == 'pithos':
 			pithos_cb(word, word_eol, userdata)
 		elif default == 'audacious':
