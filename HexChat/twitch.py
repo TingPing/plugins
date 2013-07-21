@@ -48,6 +48,5 @@ for command in commands:
 	hexchat.hook_command(command, command_cb)
 for alias in aliases:
 	hexchat.hook_command(alias, command_cb, aliases[alias])
-#hexchat.hook_server('PRIVMSG', server_cb)
 hexchat.hook_print('Private Message to Dialog', msg_cb)
 hexchat.hook_print('Your Message', yourmsg_cb)
