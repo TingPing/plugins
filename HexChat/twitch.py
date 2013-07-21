@@ -21,6 +21,11 @@ def is_twitch():
 		return True
 	else: return False
 
+# Twitch returns a lot of 'unknown command' errors, ignore them.
+def servererr_cb(word, word_eol, userdata):
+	if is_twitch():
+		return hexchat.EAT_ALL
+
 # Print jtv messages in front tab.. to improve.
 def msg_cb(word, word_eol, userdata):
 	if is_twitch() and hexchat.nickcmp(word[0], 'jtv') == 0:
@@ -50,3 +55,4 @@ for alias in aliases:
 	hexchat.hook_command(alias, command_cb, aliases[alias])
 hexchat.hook_print('Private Message to Dialog', msg_cb)
 hexchat.hook_print('Your Message', yourmsg_cb)
+hexchat.hook_server('421', servererr_cb)
