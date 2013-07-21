@@ -12,7 +12,9 @@ __module_description__ = 'Better integration with Twitch.tv'
 # /ban may conflict with other scripts nothing we can do about that
 # /clear is an existing command, just override it
 commands = ['timeout', 'slow', 'slowoff', 'subscribers', 'subscribersoff',
-  		'mod', 'unmod', 'mods', 'clear', 'ban', 'unban', 'commercial']
+			'mod', 'unmod', 'mods', 'clear', 'ban', 'unban', 'commercial']
+
+aliases = {'op':'mod', 'deop':'unmod'}
 
 def is_twitch():
 	if 'twitch.tv' in hexchat.get_info('server'):
@@ -31,12 +33,21 @@ def yourmsg_cb(word, word_eol, userdata):
 		return hexchat.EAT_ALL
 
 # Just prefix with a '.'.
-def command_cb(word, word_eol, userdata):
+def command_cb(word, word_eol, alias):
 	if is_twitch():
-		hexchat.command('say .{}'.format(word_eol[0]))
+		if alias:
+			if len(word_eol) > 1:
+				hexchat.command('say .{} {}'.format(alias, word_eol[1]))
+			else:
+				hexchat.command('say .{}'.format(alias))
+		else:
+			hexchat.command('say .{}'.format(word_eol[0]))
 		return hexchat.EAT_ALL
 
-for cmd in commands:
-	hexchat.hook_command(cmd, command_cb)
+for command in commands:
+	hexchat.hook_command(command, command_cb)
+for alias in aliases:
+	hexchat.hook_command(alias, command_cb, aliases[alias])
+#hexchat.hook_server('PRIVMSG', server_cb)
 hexchat.hook_print('Private Message to Dialog', msg_cb)
 hexchat.hook_print('Your Message', yourmsg_cb)
