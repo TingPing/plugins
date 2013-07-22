@@ -12,7 +12,7 @@ def privmsg_cb(word, word_eol, userdata, attrs):
 	network = hexchat.get_info('network')
 	msg = word_eol[3][1:]
 
-	if hexchat.nickcmp(sender, mynick) == 0:
+	if hexchat.nickcmp(sender, mynick) == 0 and hexchat.nickcmp(recipient, mynick) != 0:
 		if recipient[0] != '#':
 			hexchat.command('query -nofocus {}'.format(recipient))
 		hexchat.find_context(network, recipient).set()
