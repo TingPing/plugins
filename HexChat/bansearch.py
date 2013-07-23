@@ -98,7 +98,7 @@ def search_list(list, usermask):
 
 	for mask in list:
 		# If extban we require userinfo or are searching for extban
-		if mask[0] == '$' and (host or usermask[0] == '$'):
+		if mask[0] == '$' and host:
 			if match_extban (mask, host, account, realname, usermask):
 				matchlist.append(mask)
 		else:
