@@ -51,8 +51,8 @@ def command_cb(word, word_eol, alias):
 
 for command in commands:
 	hexchat.hook_command(command, command_cb)
-for alias in aliases:
-	hexchat.hook_command(alias, command_cb, aliases[alias])
+for command, alias in aliases.items():
+	hexchat.hook_command(command, command_cb, alias)
 hexchat.hook_print('Private Message to Dialog', msg_cb)
 hexchat.hook_print('Your Message', yourmsg_cb)
 hexchat.hook_server('421', servererr_cb)
