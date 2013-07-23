@@ -38,7 +38,7 @@ def do_op(deop=False):
 			hexchat.command('timer .5 cs deop {}'.format(chan))
 		
 def get_mask(nick):
-	invalid_chars = ['*', '?', '!', '@']
+	invalid_chars = ['*', '?', '!', '@', '$']
 	if any(char in nick for char in invalid_chars):
 		return nick # It's already a mask.
 
