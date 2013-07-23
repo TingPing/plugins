@@ -14,9 +14,9 @@ endquiethook = 0
 banlist = []
 quietlist = []
 
-regexescapes = {'[': r"\[", ']': r"\]", '$': r"\$", '.':r"\."}
-ircescapes = {'{': "[", '}': "]", '|': "\\"} # IRC nick substitutions
-wildcards = {'?': r".", '*': r".*"} # translate wildcards to regex
+regexescapes = {'[':r'\[', ']':r'\]', '.':r'\.'}
+ircreplace = {'{':'[', '}':']', '|':'\\'} # IRC nick substitutions
+wildcards = {'?':r'.', '*': r'.*'} # translate wildcards to regex
 
 def print_result(mask, matchlist, _type):
 	if matchlist:
@@ -27,21 +27,27 @@ def print_result(mask, matchlist, _type):
 		print('No {} matches for \00318{}\017 were found.'.format(_type, mask))
 
 def match_mask(mask, searchmask):
+	if searchmask is None:
+		searchmask = ''
+
 	# A mask of $a:* can match a user with no account
-	if searchmask is None or searchmask == '' and mask != '*':
+	if searchmask == '' and mask != '*':
 		return False
 	# A mask of $a will not match a user with no account
-	elif mask is None and searchmask != '' and not searchmask is None:
+	elif mask == '' and searchmask != '':
 		return True
 
 	# These have to be replaced in a very specific order
-	for match, repl in ircescapes.items():
+	for match, repl in ircreplace.items():
 		mask = mask.replace(match, repl)
 		searchmask = searchmask.replace(match, repl)
 	for match, repl in regexescapes.items():
 		mask = mask.replace(match, repl)
 	for match, repl in wildcards.items():
 		mask = mask.replace(match, repl)
+
+	if '$' in mask: # $#channel is used to foward users, ignore it
+		mask = mask.split('$')[0]
 
 	return bool(re.match(mask, searchmask, re.IGNORECASE))
 
@@ -50,7 +56,7 @@ def match_extban(mask, host, account, realname, usermask):
 		extban, banmask = mask.split(':')
 	except ValueError:
 		extban = mask
-		banmask = None
+		banmask = ''
 
 	if '~' in extban:
 		invert = True
