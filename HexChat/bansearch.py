@@ -3,7 +3,7 @@ import re
 
 __module_name__ = 'BanSearch'
 __module_author__ = 'TingPing'
-__module_version__ = '1'
+__module_version__ = '2'
 __module_description__ = 'Search for bans/quiets matching a user'
 
 banhook = 0
@@ -14,9 +14,9 @@ endquiethook = 0
 banlist = []
 quietlist = []
 
-patterns = {'?': ".", '*': ".*", # translate wildcards to regex
-            '{': r"\[", '}': r"\]", '|': r"\\", # IRC nick substitutions
-            '[': r"\[", ']': r"\]", '$': r"\$", '.':r"\.", '!':r"\!"} # regex escapes
+regexescapes = {'[': r"\[", ']': r"\]", '$': r"\$", '.':r"\."}
+ircescapes = {'{': "[", '}': "]", '|': "\\"} # IRC nick substitutions
+wildcards = {'?': r".", '*': r".*"} # translate wildcards to regex
 
 def print_result(mask, matchlist, matchnum, _type):
 	if matchnum:
@@ -27,10 +27,22 @@ def print_result(mask, matchlist, matchnum, _type):
 		print('No {} matches for \00318{}\017 were found.'.format(_type, mask))
 
 def match_mask(mask, searchmask):
-	if searchmask is None:
+	# A mask of $a:* can match a user with no account
+	if searchmask is None or searchmask == '' and mask != '*':
 		return False
-	for match, repl in patterns.items():
+	# A mask of $a will not match a user with no account
+	elif mask is None and searchmask != '' and not searchmask is None:
+		return True
+
+	# These have to be replaced in a very specific order
+	for match, repl in ircescapes.items():
+		mask = mask.replace(match, repl)
 		searchmask = searchmask.replace(match, repl)
+	for match, repl in regexescapes.items():
+		mask = mask.replace(match, repl)
+	for match, repl in wildcards.items():
+		mask = mask.replace(match, repl)
+
 	return bool(re.match(mask, searchmask, re.IGNORECASE))
 
 def match_extban(mask, host, account, realname, usermask):
@@ -38,7 +50,7 @@ def match_extban(mask, host, account, realname, usermask):
 		extban, banmask = mask.split(':')
 	except ValueError:
 		extban = mask
-		banmask = '*'
+		banmask = None
 
 	if '~' in extban:
 		invert = True
@@ -47,11 +59,11 @@ def match_extban(mask, host, account, realname, usermask):
 
 	# From http://freenode.net/using_the_network.shtml
 	if 'a' in extban:
-		ret = match_mask (account, banmask)
+		ret = match_mask (banmask, account)
 	elif 'r' in extban:
-		ret = match_mask (realname, banmask)
+		ret = match_mask (banmask, realname)
 	elif 'x' in extban:
-		ret = match_mask ('{}#{}'.format(host, realname), banmask)
+		ret = match_mask (banmask, '{}#{}'.format(host, realname))
 	else:
 		return False
 
