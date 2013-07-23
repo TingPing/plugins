@@ -18,9 +18,9 @@ regexescapes = {'[': r"\[", ']': r"\]", '$': r"\$", '.':r"\."}
 ircescapes = {'{': "[", '}': "]", '|': "\\"} # IRC nick substitutions
 wildcards = {'?': r".", '*': r".*"} # translate wildcards to regex
 
-def print_result(mask, matchlist, matchnum, _type):
-	if matchnum:
-		print('\00318{}\017 had \00320{}\017 {} matches:'.format(mask, matchnum, _type))
+def print_result(mask, matchlist, _type):
+	if matchlist:
+		print('\00318{}\017 had \00320{}\017 {} matches:'.format(mask, len(matchlist), _type))
 		for match in matchlist:
 			print('\t\t\t{}'.format(match))
 	else:
@@ -86,6 +86,26 @@ def get_user_info(nick):
 
 	return (None, None, None)
 
+def search_list(list, usermask):
+	matchlist = []
+	host, account, realname = get_user_info (usermask)
+
+	for mask in list:
+		# If extban we require userinfo or are searching for extban
+		if mask[0] == '$' and (host or usermask[0] == '$'):
+			if match_extban (mask, host, account, realname, usermask):
+				matchlist.append(mask)
+		else:
+			if host: # Was given a user
+				if match_mask (mask, host):
+					matchlist.append(mask)
+			else: # Was given a mask or no userinfo found
+				if match_mask (mask, usermask):
+					matchlist.append(mask)
+
+	return matchlist
+
+
 def banlist_cb(word, word_eol, userdata):
 	global banlist
 	banlist.append(word[4])
@@ -96,36 +116,17 @@ def endbanlist_cb(word, word_eol, usermask):
 	global endbanhook
 	global banlist
 	matchlist = []
-	matchnum = 0
 
-	# Cleanup hooks
 	hexchat.unhook(banhook)
 	banhook = 0
 	hexchat.unhook(endbanhook)
 	endbanhook = 0
 
-	host, account, realname = get_user_info (usermask)
-
 	if banlist:
-		for mask in banlist:
-			# If extban we require userinfo or are searching for extban
-			if mask[0] == '$' and (host or usermask[0] == '$'):
-				if match_extban (mask, host, account, realname, usermask):
-					matchlist.append(mask)
-					matchnum = matchnum + 1
-			else:
-				if host: # Was given a user
-					if match_mask (mask, host):
-						matchlist.append(mask)
-						matchnum = matchnum + 1
-				else: # Was given a mask or no userinfo found
-					if match_mask (mask, usermask):
-						matchlist.append(mask)
-						matchnum = matchnum + 1
-
+		matchlist = search_list(banlist, usermask)
 		banlist = []
 
-	print_result (usermask, matchlist, matchnum, 'Ban')
+	print_result (usermask, matchlist, 'Ban')
 
 	return hexchat.EAT_HEXCHAT
 
@@ -139,36 +140,17 @@ def endquietlist_cb(word, word_eol, usermask):
 	global endquiethook
 	global quietlist
 	matchlist = []
-	matchnum = 0
 
-	# Cleanup hooks
 	hexchat.unhook(quiethook)
 	quiethook = 0
 	hexchat.unhook(endquiethook)
 	endquiethook = 0
 
-	host, account, realname = get_user_info (usermask)
-
 	if quietlist:
-		for mask in quietlist:
-			# If extban we require userinfo or are searching for extban
-			if mask[0] == '$' and (host or usermask[0] == '$'):
-				if match_extban (mask, host, account, realname, usermask):
-					matchlist.append(mask)
-					matchnum = matchnum + 1
-			else:
-				if host: # Was given a user
-					if match_mask (mask, host):
-						matchlist.append(mask)
-						matchnum = matchnum + 1
-				else: # Was given a mask or no userinfo found
-					if match_mask (mask, usermask):
-						matchlist.append(mask)
-						matchnum = matchnum + 1
-
+		matchlist = search_list(quietlist, usermask)
 		quietlist = []
 
-	print_result (usermask, matchlist, matchnum, 'Quiet')
+	print_result (usermask, matchlist, 'Quiet')
 
 	return hexchat.EAT_HEXCHAT
 
