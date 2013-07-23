@@ -56,9 +56,6 @@ def script_cb(word, word_eol, userdata):
 		if download(arg):
 			hexchat.command('timer 1 load ' + expand_script(arg))
 	elif cmd == 'update':
-		if arg == 'script.py':
-			print('Script: I cannot update myself.')
-			return hexchat.EAT_ALL
 		if os.path.exists(expand_script(arg)) and download(arg):
 			hexchat.command('timer 1 reload ' + arg)
 	elif cmd == 'edit':
