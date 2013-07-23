@@ -46,7 +46,7 @@ def match_mask(mask, searchmask):
 	for match, repl in wildcards.items():
 		mask = mask.replace(match, repl)
 
-	if '$' in mask: # $#channel is used to foward users, ignore it
+	if '$' in mask and mask[0] != '$': # $#channel is used to forward users, ignore it
 		mask = mask.split('$')[0]
 
 	return bool(re.match(mask, searchmask, re.IGNORECASE))
@@ -63,8 +63,14 @@ def match_extban(mask, host, account, realname, usermask):
 	else:
 		invert = False
 
-	# From http://freenode.net/using_the_network.shtml
-	if 'a' in extban:
+	# Extbans from http://freenode.net/using_the_network.shtml
+	if ':' in usermask: # Searching for extban
+		userextban, usermask = usermask.split(':') 
+		if extban == userextban:
+			ret = match_mask(banmask, usermask)
+		else:
+			return False
+	elif 'a' in extban:
 		ret = match_mask (banmask, account)
 	elif 'r' in extban:
 		ret = match_mask (banmask, realname)
@@ -97,11 +103,11 @@ def search_list(list, usermask):
 	host, account, realname = get_user_info (usermask)
 
 	for mask in list:
-		# If extban we require userinfo or are searching for extban
-		if mask[0] == '$' and host:
+		# If extban we require userinfo or we are searching for extban
+		if mask[0] == '$' and (host or usermask[0] == '$'):
 			if match_extban (mask, host, account, realname, usermask):
 				matchlist.append(mask)
-		else:
+		elif mask[0] != '$':
 			if host: # Was given a user
 				if match_mask (mask, host):
 					matchlist.append(mask)
@@ -190,4 +196,3 @@ def unload_cb(userdata):
 hexchat.hook_unload(unload_cb)
 hexchat.hook_command('bansearch', search_cb, help='BANSEARCH <mask|nick>')
 hexchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.')
-
