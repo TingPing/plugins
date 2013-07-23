@@ -31,8 +31,7 @@ def match_mask(mask, searchmask):
 		return False
 	for match, repl in patterns.items():
 		searchmask = searchmask.replace(match, repl)
-	pattern = re.compile(searchmask.lower())
-	return pattern.match(mask.lower())
+	return bool(re.match(mask, searchmask, re.IGNORECASE))
 
 def match_extban(mask, host, account, realname, usermask):
 	try:
