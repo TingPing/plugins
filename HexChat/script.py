@@ -13,13 +13,14 @@ __module_description__ = 'Download scripts'
 
 script_help = 'Script: Valid commands are:\n \
 			INSTALL script\n \
+			EDIT script\n \
 			UPDATE script\n \
 			REMOVE script'
 
 addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 
 # Store as preference?
-addon_types = ['py', 'pl', 'lua', 'tcl', 'js']
+addon_types = ['py', 'pl', 'lua', 'js'] # tcl has no way to unload a single script?
 addon_sites = ['http://raw.github.com/TingPing/plugins/master/HexChat/',
 				'http://raw.github.com/Arnavion/random/master/hexchat/',
 				'http://orvp.net/xchat/']
@@ -54,10 +55,11 @@ def script_cb(word, word_eol, userdata):
 			print('Script: {} is already installed.'.format(arg))
 			return hexchat.EAT_ALL
 		if download(arg):
-			hexchat.command('timer 1 load ' + expand_script(arg))
+			hexchat.command('timer .5 load ' + expand_script(arg))
 	elif cmd == 'update':
 		if os.path.exists(expand_script(arg)) and download(arg):
-			hexchat.command('timer 1 reload ' + arg)
+			hexchat.command('timer .5 unload ' + arg)
+			hexchat.command('timer 1 load ' + arg)
 	elif cmd == 'edit':
 		hexchat.command('url ' + expand_script(arg))
 	elif cmd == 'remove':
