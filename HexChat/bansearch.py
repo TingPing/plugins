@@ -178,6 +178,10 @@ def search_cb(word, word_eol, userdata):
 
 	return hexchat.EAT_ALL
 
+def unload_cb(userdata):
+	print(__module_name__ + ' version ' + __module_version__ + ' unloaded.')
+
+hexchat.hook_unload(unload_cb)
 hexchat.hook_command('bansearch', search_cb, help='BANSEARCH <mask|nick>')
 hexchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.')
 
