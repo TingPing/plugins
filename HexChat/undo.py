@@ -6,7 +6,7 @@ import xchat as hexchat
 __module_name__ = "Undo"
 __module_author__ = "TingPing"
 __module_version__ = "0"
-__module_description__ = "Binds ctrl+z to undo"
+__module_description__ = "Binds ctrl+z to undo and ctrl+y/shift+ctrl+z to redo."
 
 undolevels = 10
 redolevels = 5
