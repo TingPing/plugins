@@ -32,31 +32,31 @@ def keypress_cb(word, word_eol, userdata):
 
 	# Previous strings are stored as deque's in a dict for each channel
 	if not bufname in undobufs:
-		bufferlist = undobufs[bufname] = deque(maxlen=undolevels)
+		undobuflist = undobufs[bufname] = deque(maxlen=undolevels)
 	else:
-		bufferlist = undobufs[bufname]
+		undobuflist = undobufs[bufname]
 
 	if not bufname in redobufs:
-		redobufferlist = redobufs[bufname] = deque(maxlen=redolevels)
+		redobuflist = redobufs[bufname] = deque(maxlen=redolevels)
 	else:
-		redobufferlist = redobufs[bufname]
+		redobuflist = redobufs[bufname]
 
 
 	if (key, mod) == ('122', ctrlmod): # ctrl+z
 		try:
 			# Get last saved string
-			text = bufferlist.pop()
+			text = undobuflist.pop()
 			hexchat.command('settext {}'.format(text))
 			hexchat.command('setcursor {}'.format(len(text)))
 
-			redobufferlist.append(text)
+			redobuflist.append(text)
 
 		except IndexError: pass # No undos left
 
 	elif ((key, mod) == ('121', ctrlmod) or # ctrl+y
 			(key, mod) == ('90', shiftctrlmod)): # ctrl+shift+z 
 		try:
-			text = redobufferlist.pop()
+			text = redobuflist.pop()
 			hexchat.command('settext {}'.format(text))
 			hexchat.command('setcursor {}'.format(len(text)))
 
@@ -64,7 +64,7 @@ def keypress_cb(word, word_eol, userdata):
 
 	else:
 		# Just throw anything else in here, can be improved...
-		bufferlist.append(hexchat.get_info('inputbox'))
+		undobuflist.append(hexchat.get_info('inputbox'))
 
 def unload_cb(userdata):
 	print(__module_name__, 'version',  __module_version__, 'unloaded.')
