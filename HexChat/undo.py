@@ -1,37 +1,74 @@
 from __future__ import print_function
 from collections import deque
+from sys import platform
 import xchat as hexchat
 
-__module_name__ = "undo"
+__module_name__ = "Undo"
 __module_author__ = "TingPing"
 __module_version__ = "0"
 __module_description__ = "Binds ctrl+z to undo"
 
 undolevels = 10
+redolevels = 5
 
-buffers = {}
+undobufs = {}
+redobufs = {}
+
+# Windows and Linux return different modifiers
+if platform == 'win32':
+	ctrlmod = '4'
+	shiftctrlmod = '5'
+else:
+	ctrlmod = '20'
+	shiftctrlmod = '21'
 
 def keypress_cb(word, word_eol, userdata):
-	global buffers
-	buffername = '{}_{}'.format(hexchat.get_info('channel'), hexchat.get_info('network'))
+	global undobufs
+	global redobufs
+	bufname = '{}_{}'.format(hexchat.get_info('channel'), hexchat.get_info('network'))
+	key = word[0]
+	mod = word[1]
 
-	if not buffername in buffers:
-		bufferlist = buffers[buffername] = deque(maxlen=undolevels)
+
+	# Previous strings are stored as deque's in a dict for each channel
+	if not bufname in undobufs:
+		bufferlist = undobufs[bufname] = deque(maxlen=undolevels)
 	else:
-		bufferlist = buffers[buffername]
+		bufferlist = undobufs[bufname]
 
-	if word[0] == '122' and word[1] == '4': # ctrl+z
+	if not bufname in redobufs:
+		redobufferlist = redobufs[bufname] = deque(maxlen=redolevels)
+	else:
+		redobufferlist = redobufs[bufname]
+
+
+	if (key, mod) == ('122', ctrlmod): # ctrl+z
 		try:
+			# Get last saved string
 			text = bufferlist.pop()
 			hexchat.command('settext {}'.format(text))
 			hexchat.command('setcursor {}'.format(len(text)))
+
+			redobufferlist.append(text)
+
+		except IndexError: pass # No undos left
+
+	elif ((key, mod) == ('121', ctrlmod) or # ctrl+y
+			(key, mod) == ('90', shiftctrlmod)): # ctrl+shift+z 
+		try:
+			text = redobufferlist.pop()
+			hexchat.command('settext {}'.format(text))
+			hexchat.command('setcursor {}'.format(len(text)))
+
 		except IndexError: pass
+
 	else:
+		# Just throw anything else in here, can be improved...
 		bufferlist.append(hexchat.get_info('inputbox'))
 
 def unload_cb(userdata):
-	print('{} version {} unloaded'.format(__module_name__, __module_version__))
+	print(__module_name__, 'version',  __module_version__, 'unloaded.')
 
 hexchat.hook_print('Key Press', keypress_cb) 
 hexchat.hook_unload(unload_cb)
-print('{} version {} loaded'.format(__module_name__, __module_version__))
+print(__module_name__, 'version',  __module_version__, 'loaded.')
