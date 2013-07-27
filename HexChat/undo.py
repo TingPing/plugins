@@ -1,6 +1,6 @@
 from __future__ import print_function
 from collections import deque
-import hexchat
+import xchat as hexchat
 
 __module_name__ = "undo"
 __module_author__ = "TingPing"
