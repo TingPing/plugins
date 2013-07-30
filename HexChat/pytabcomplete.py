@@ -11,7 +11,7 @@ lastcomplete = 0
 lasttext = ''
 
 def keypress_cb(word, word_eol, userdata):
-  global lastmodule
+	global lastmodule
 	global lastcomplete
 	global lasttext
 
