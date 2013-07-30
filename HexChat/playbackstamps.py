@@ -17,7 +17,7 @@ def msg_cb(word, word_eol, event_name, attrs):
 	global edited
 
 	event_time = attrs.time
-	if not event_time or edited or event_time - time() < 86400: # Didn't happen today
+	if not event_time or edited or event_time - time() < 86400: # Ignore if within 24hrs
 		return
 
 	format = hexchat.get_prefs('stamp_text_format')
