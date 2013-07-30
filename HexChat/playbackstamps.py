@@ -9,8 +9,12 @@ __module_description__ = 'Prints date on older playback messages'
 
 edited = False
 
+events = ['Channel Message', 'Channel Msg Hillight',
+		'Channel Action', 'Channel Action Hillight',
+		'Your Action', 'Your Message']
+
 def msg_cb(word, word_eol, event_name, attrs):
-  global edited
+	global edited
 
 	event_time = attrs.time
 	if not event_time or edited or event_time - time() < 86400: # Didn't happen today
@@ -30,11 +34,7 @@ def msg_cb(word, word_eol, event_name, attrs):
 def unload_cb(userdata):
 	print(__module_name__, 'version', __module_version__, 'unloaded.')
 
-hexchat.hook_print_attrs('Channel Message', msg_cb, 'Channel Message')
-hexchat.hook_print_attrs('Channel Action', msg_cb, 'Channel Action')
-hexchat.hook_print_attrs('Channel Msg Highlight', msg_cb, 'Channel Msg Hilight')
-hexchat.hook_print_attrs('Channel Action Highlight', msg_cb, 'Channel Action Hilight')
-hexchat.hook_print_attrs('Your Action', msg_cb, 'Your Action')
-hexchat.hook_print_attrs('Your Message', msg_cb, 'Your Message')
+for event in events:
+	hexchat.hook_print_attrs(event, msg_cb, event)
 hexchat.hook_unload(unload_cb)
 print(__module_name__, 'version', __module_version__, 'loaded.')
