@@ -1,10 +1,10 @@
 from __future__ import print_function
-from time import time
+from datetime import date
 import hexchat
 
 __module_name__ = 'PlaybackStamps'
 __module_author__ = 'TingPing'
-__module_version__ = '0'
+__module_version__ = '1'
 __module_description__ = 'Prints date on older playback messages'
 
 edited = False
@@ -13,11 +13,29 @@ events = ['Channel Message', 'Channel Msg Hillight',
 		'Channel Action', 'Channel Action Hillight',
 		'Your Action', 'Your Message']
 
+def is_today(event_time):
+	# 0 means now
+	if not event_time:
+		return True
+
+	now = date.today()
+	event = date.fromtimestamp(event_time)
+	diff = now - event
+
+	# Was over 24hrs ago
+	if diff.total_seconds() > 86400:
+		return False
+
+	# Different date
+	if event.year < now.year or event.month < now.month or event.day < now.day:
+		return False
+
+	return True
+
 def msg_cb(word, word_eol, event_name, attrs):
 	global edited
 
-	event_time = attrs.time
-	if not event_time or edited or event_time - time() < 86400: # Ignore if within 24hrs
+	if edited or is_today(attrs.time):
 		return
 
 	format = hexchat.get_prefs('stamp_text_format')
