@@ -18,8 +18,8 @@ def privmsg_cb(word, word_eol, userdata, attrs):
 		hexchat.find_context(network, recipient).set()
 
 		if '\001ACTION' in msg:
-			msg = msg.strip('\001ACTION')
-			msg = msg.strip('\001')
+			for repl in ('\001ACTION', '\001'):
+				msg = msg.replace(repl, '')
 			hexchat.emit_print('Your Action', mynick, msg.strip(), time=attrs.time)
 		else:
 			hexchat.emit_print('Your Message', mynick, msg, time=attrs.time)
