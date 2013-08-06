@@ -21,6 +21,8 @@ def check_lasttalk (nick):
 			else:
 				return hexchat.EAT_NONE
 
+	return hexchat.EAT_HEXCHAT
+
 def nick_cb(word, word_eol, userdata):
 	if check_notify(word[0]) or check_notify(word[1]):
 		return hexchat.EAT_NONE
