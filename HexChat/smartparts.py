@@ -3,8 +3,8 @@ import hexchat
 
 __module_name__ = 'SmartParts'
 __module_author__ = 'TingPing'
-__module_version__ = '0'
-__module_description__ = 'Intelligently hide parts, joins, and nick changes'
+__module_version__ = '1'
+__module_description__ = 'Intelligently hide parts, joins, autoop, and nick changes'
 
 def check_notify (nick):
 	for user in hexchat.get_list('notify'):
@@ -29,12 +29,17 @@ def nick_cb(word, word_eol, userdata):
 
 	return check_lasttalk(word[0])
 
+def mode_cb(word, word_eol, userdata):
+	if check_notify(word[1]):
+		return hexchat.EAT_NONE
+
+	return check_lasttalk(word[1])
+
 def join_cb(word, word_eol, userdata):
 	if check_notify(word[0]):
 		return hexchat.EAT_NONE
 	else:
 		return hexchat.EAT_HEXCHAT
-	#return check_lasttalk(word[0])
 
 def part_cb(word, word_eol, userdata):
 	if check_notify(word[0]):
@@ -42,9 +47,9 @@ def part_cb(word, word_eol, userdata):
 
 	return check_lasttalk(word[0])
 
-
-hexchat.hook_print('Quit', part_cb)
-hexchat.hook_print('Part', part_cb)
-hexchat.hook_print('Part with Reason', part_cb)
+for event in ('Quit', 'Part', 'Part with Reason'):
+	hexchat.hook_print(event, part_cb)
+for event in ('Channel Operator', 'Channel Voice'):
+	hexchat.hook_print(event, mode_cb)
 hexchat.hook_print('Join', join_cb)
 hexchat.hook_print('Change Nick', nick_cb)
