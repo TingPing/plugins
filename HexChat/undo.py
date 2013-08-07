@@ -9,7 +9,7 @@ __module_version__ = "1"
 __module_description__ = "Binds ctrl+z to undo and ctrl+y/shift+ctrl+z to redo."
 
 undolevels = 10
-redolevels = 5
+redolevels = 10
 
 undobufs = {}
 redobufs = {}
@@ -47,6 +47,7 @@ def keypress_cb(word, word_eol, userdata):
 			# Get last saved string
 			text = undobuflist.pop()
 			if text == inputtext: # First undo may result in same text
+				redobuflist.append(text)
 				text = undobuflist.pop()
 			hexchat.command('settext {}'.format(text))
 			hexchat.command('setcursor {}'.format(len(text)))
