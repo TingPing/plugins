@@ -66,7 +66,7 @@ def keypress_cb(word, word_eol, userdata):
 
 	else:
 		# Just throw anything else in here if it has changed
-		if len(undobuflist) < 1 or undobuflist[-1] != inputtext:
+		if not undobuflist or undobuflist[-1] != inputtext:
 			undobuflist.append(inputtext)
 
 def unload_cb(userdata):
