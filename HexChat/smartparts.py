@@ -8,14 +8,14 @@ __module_description__ = 'Intelligently hide parts, joins, autoop, and nick chan
 
 def check_notify (nick):
 	for user in hexchat.get_list('notify'):
-		if user.nick == nick:
+		if user.nick == hexchat.strip(nick):
 			return True
 		
 	return False
 
 def check_lasttalk (nick):
 	for user in hexchat.get_list('users'):
-		if user.nick == nick:
+		if user.nick == hexchat.strip(nick):
 			if time() - user.lasttalk > 60 * 5:
 				return hexchat.EAT_HEXCHAT
 			else:
