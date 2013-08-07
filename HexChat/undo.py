@@ -59,6 +59,8 @@ def keypress_cb(word, word_eol, userdata):
 			(key, mod) == ('90', shiftctrlmod)): # ctrl+shift+z 
 		try:
 			text = redobuflist.pop()
+			if text == inputtext:
+				text = redobuflist.pop()
 			hexchat.command('settext {}'.format(text))
 			hexchat.command('setcursor {}'.format(len(text)))
 
