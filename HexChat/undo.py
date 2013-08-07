@@ -5,7 +5,7 @@ import xchat as hexchat
 
 __module_name__ = "Undo"
 __module_author__ = "TingPing"
-__module_version__ = "0"
+__module_version__ = "1"
 __module_description__ = "Binds ctrl+z to undo and ctrl+y/shift+ctrl+z to redo."
 
 undolevels = 10
@@ -28,7 +28,7 @@ def keypress_cb(word, word_eol, userdata):
 	bufname = '{}_{}'.format(hexchat.get_info('channel'), hexchat.get_info('network'))
 	key = word[0]
 	mod = word[1]
-
+	inputtext = hexchat.get_info('inputbox')
 
 	# Previous strings are stored as deque's in a dict for each channel
 	if not bufname in undobufs:
@@ -46,6 +46,8 @@ def keypress_cb(word, word_eol, userdata):
 		try:
 			# Get last saved string
 			text = undobuflist.pop()
+			if text == inputtext: # First undo may result in same text
+				text = undobuflist.pop()
 			hexchat.command('settext {}'.format(text))
 			hexchat.command('setcursor {}'.format(len(text)))
 
@@ -63,8 +65,9 @@ def keypress_cb(word, word_eol, userdata):
 		except IndexError: pass
 
 	else:
-		# Just throw anything else in here, can be improved...
-		undobuflist.append(hexchat.get_info('inputbox'))
+		# Just throw anything else in here if it has changed
+		if len(undobuflist) < 1 or undobuflist[-1] != inputtext:
+			undobuflist.append(inputtext)
 
 def unload_cb(userdata):
 	print(__module_name__, 'version',  __module_version__, 'unloaded.')
