@@ -1,10 +1,10 @@
 from __future__ import print_function
 import hexchat
 
-__module_name__ = ""
-__module_author__ = "TingPing"
-__module_version__ = "0"
-__module_description__ = ""
+__module_name__ = ''
+__module_author__ = 'TingPing'
+__module_version__ = '0'
+__module_description__ = ''
 
 def _cb(word, word_eol, userdata):
 
