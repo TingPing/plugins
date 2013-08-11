@@ -13,12 +13,13 @@ var edited = false;
 function is_today (event_time)
 {
 	let now = new Date();
+	let etime = new Date(event_time); // Duplicate since we edit it later
 
-	if (now.getTime() - event_time.getTime() > 86400000)
+	if (now.getTime() - etime.getTime() > 86400000)
 		return false; // Was over 24hrs ago
 
 	// Set time to 0, we only care about date
-	if (event_time.setHours(0,0,0,0) != now.setHours(0,0,0,0))
+	if (etime.setHours(0,0,0,0) != now.setHours(0,0,0,0))
 		return false; // Different date
 
 	return true;
@@ -42,5 +43,5 @@ function msg_cb(word, event_time, event)
 }
 
 for each (let event in events) {
-	hook_print(event, msg_cb, event);
+	hook_print(event, msg_cb, event, PRI_LOWEST);
 }
