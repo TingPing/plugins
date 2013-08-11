@@ -65,7 +65,7 @@ def match_extban(mask, host, account, realname, usermask):
 
 	# Extbans from http://freenode.net/using_the_network.shtml
 	if ':' in usermask: # Searching for extban
-		userextban, usermask = usermask.split(':') 
+		userextban, usermask = usermask.split(':')
 		if extban == userextban:
 			ret = match_mask(banmask, usermask)
 		else:
@@ -173,8 +173,8 @@ def search_cb(word, word_eol, userdata):
 	global endquiethook
 
 	if len(word) == 2:
-		hooks = [quiethook, banhook, endquiethook, endbanhook]
-		if not any(hook for hook in hooks):
+		hooks = (quiethook, banhook, endquiethook, endbanhook)
+		if not any(hooks):
 			banhook = hexchat.hook_server ('367', banlist_cb)
 			quiethook = hexchat.hook_server ('728', quietlist_cb)
 			endbanhook = hexchat.hook_server ('368', endbanlist_cb, word[1])
