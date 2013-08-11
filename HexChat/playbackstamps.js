@@ -12,9 +12,9 @@ var edited = false;
 
 function is_today (event_time)
 {
-  let now = new Date();
+	let now = new Date();
 
-	if (now.getTime() - event_time.getTime() > 86400)
+	if (now.getTime() - event_time.getTime() > 86400000)
 		return false; // Was over 24hrs ago
 
 	// Set time to 0, we only care about date
