@@ -1,11 +1,10 @@
-
 SCRIPT_NAME = 'PlaybackStamps';
 SCRIPT_VER = '1';
 SCRIPT_DESC = 'Prints date on older playback messages';
 // I wrote this in Python first but this is noticably faster
 
-const events = ['Channel Message', 'Channel Msg Hillight',
-                'Channel Action', 'Channel Action Hillight',
+const events = ['Channel Message', 'Channel Msg Hilight',
+                'Channel Action', 'Channel Action Hilight',
                 'Your Action', 'Your Message'];
 
 var edited = false;
