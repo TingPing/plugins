@@ -9,8 +9,8 @@ __module_description__ = 'Prints date on older playback messages'
 
 edited = False
 
-events = ['Channel Message', 'Channel Msg Hillight',
-		'Channel Action', 'Channel Action Hillight',
+events = ['Channel Message', 'Channel Msg Hilight',
+		'Channel Action', 'Channel Action Hilight',
 		'Your Action', 'Your Message']
 
 def is_today(event_time):
