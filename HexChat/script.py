@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import sys
 if sys.version_info[0] < 3:
@@ -20,10 +21,10 @@ script_help = 'Script: Valid commands are:\n \
 addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 
 # Store as preference?
-addon_types = ['py', 'pl', 'lua', 'js'] # tcl has no way to unload a single script?
-addon_sites = ['http://raw.github.com/TingPing/plugins/master/HexChat/',
+addon_types = ('py', 'pl', 'lua', 'js') # tcl has no way to unload a single script?
+addon_sites = ('http://raw.github.com/TingPing/plugins/master/HexChat/',
 				'http://raw.github.com/Arnavion/random/master/hexchat/',
-				'http://orvp.net/xchat/']
+				'http://orvp.net/xchat/')
 
 
 def expand_script(script):
@@ -78,8 +79,8 @@ def script_cb(word, word_eol, userdata):
 
 
 def unload_callback(userdata):
-	print('{} version {} unloaded'.format(__module_name__, __module_version__))
+	print(__module_name__, 'version', __module_version__, 'unloaded.')
 
 hexchat.hook_command('script', script_cb, help=script_help)
 hexchat.hook_unload(unload_callback)
-print('{} version {} loaded'.format(__module_name__, __module_version__))
+print(__module_name__, 'version', __module_version__, 'loaded.')
