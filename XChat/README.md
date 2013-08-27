@@ -1,11 +1,1 @@
-Growl
------
-Adds Growl notifications to XChat.
-
-Pithos
-------
-Announce Pithos current songs.
-
-Define
-------
-Define word using google.
+I recommend you upgrade to [HexChat](http://hexchat.github.io) and use my updated [HexChat scripts](https://github.com/TingPing/plugins/tree/master/HexChat) instead.
