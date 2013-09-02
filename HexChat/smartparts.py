@@ -3,7 +3,7 @@ import hexchat
 
 __module_name__ = 'SmartParts'
 __module_author__ = 'TingPing'
-__module_version__ = '1'
+__module_version__ = '2'
 __module_description__ = 'Intelligently hide parts, joins, autoop, and nick changes'
 
 def check_notify (nick):
@@ -23,6 +23,9 @@ def check_lasttalk (nick):
 
 	return hexchat.EAT_HEXCHAT
 
+def check_you (nick):
+	return not hexchat.nickcmp(hexchat.get_info('nick'), nick)
+
 def nick_cb(word, word_eol, userdata):
 	if check_notify(word[0]) or check_notify(word[1]):
 		return hexchat.EAT_NONE
@@ -30,6 +33,9 @@ def nick_cb(word, word_eol, userdata):
 	return check_lasttalk(word[0])
 
 def mode_cb(word, word_eol, userdata):
+	if check_you(word[0]) or check_you(word[1]):
+		return hexchat.EAT_NONE
+
 	if check_notify(word[1]):
 		return hexchat.EAT_NONE
 
