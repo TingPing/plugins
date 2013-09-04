@@ -3,7 +3,7 @@ import hexchat
 __module_name__ = 'MyMessages'
 __module_author__ = 'TingPing'
 __module_version__ = '2'
-__module_description__ = 'Properly show your messages in znc playback and with privmsg module'
+__module_description__ = 'Properly show your messages in znc with privmsg module'
 
 def privmsg_cb(word, word_eol, userdata, attrs):
 	mynick = hexchat.get_info('nick')
