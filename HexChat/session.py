@@ -13,10 +13,10 @@ def load_session():
 			channels = hexchat.get_pluginpref('session_' + network).split(',')
 			hexchat.command('url irc://"{}"/'.format(network)) # Using url avoids autojoin
 			hexchat.find_context(server=network).set()
-			delay = hexchat.get_prefs('irc_join_delay')
+			delay = hexchat.get_prefs('irc_join_delay') + 10
 			for chan in channels:
 				if chan[0] != '#':
-					hexchat.command('query -nofocus {}'.format(chan))
+					hexchat.command('timer {} query -nofocus {}'.format(delay, chan))
 				else:
 					hexchat.command('timer {} join {}'.format(delay, chan))
 
