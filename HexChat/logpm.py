@@ -1,4 +1,4 @@
-import hexchat
+import xchat as hexchat
 
 __module_name__ = "LogPMs"
 __module_author__ = "TingPing"
