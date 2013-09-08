@@ -1,5 +1,5 @@
 from __future__ import print_function
-import xchat as hexchat
+import hexchat
 
 __module_name__ = "session"
 __module_author__ = "TingPing"
