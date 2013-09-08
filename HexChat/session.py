@@ -3,7 +3,7 @@ import xchat as hexchat
 
 __module_name__ = "session"
 __module_author__ = "TingPing"
-__module_version__ = "0"
+__module_version__ = "1"
 __module_description__ = "Saves current session for next start"
 # To use just disable auto-connect and start using 'Quit and Save' from the menu.
 
@@ -30,13 +30,16 @@ def quit_cb(word, word_eol, userdata):
 		if chan.type != 1:
 			if not chan.network in networks:
 				networks[chan.network] = []
-			networks[chan.network].append(chan.channel)
+			if (chan.channelkey):
+				networks[chan.network].append(chan.channel + ' ' + chan.channelkey)
+			else:
+				networks[chan.network].append(chan.channel)
 
 	for network, channels in networks.items():
 		hexchat.set_pluginpref('session_' + network, ','.join(channels))
 		hexchat.find_context(server=network).command('quit')
 		
-	hexchat.command('killall')
+	hexchat.command('timer 1 killall')
 
 def unload_cb(userdata):
 	print(__module_name__, 'version', __module_version__, 'unloaded.')
