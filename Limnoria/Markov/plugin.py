@@ -217,14 +217,14 @@ class DbmMarkovDB(object):
             db.close()
 
     def _getDb(self, channel):
-        import anydbm
+        import dbm
         if channel not in self.dbs:
             filename = plugins.makeChannelFilename(self.filename, channel)
             # To keep the code simpler for addPair, I decided not to make
             # self.dbs[channel]['firsts'] and ['lasts'].  Instead, we'll pad
             # the words list being sent to addPair such that ['\n \n'] will be
             # ['firsts'] and ['\n'] will be ['lasts'].
-            self.dbs[channel] = anydbm.open(filename, 'c')
+            self.dbs[channel] = dbm.open(filename, 'c')
         return self.dbs[channel]
 
     def _flush(self, db):
@@ -235,7 +235,7 @@ class DbmMarkovDB(object):
 
     def _addPair(self, channel, pair, follow):
         db = self._getDb(channel)
-        # EW! but necessary since not all anydbm backends support
+        # EW! but necessary since not all dbm backends support
         # "combined in db"
         if db.has_key(pair):
             db[pair] = ' '.join([db[pair], follow])
@@ -293,13 +293,13 @@ class DbmMarkovDB(object):
 
     def follows(self, channel):
         db = self._getDb(channel)
-        # anydbm sucks in that we're not guaranteed to have .iteritems()
+        # dbm sucks in that we're not guaranteed to have .iteritems()
         # *cough*gdbm*cough*, so this has to be done the stupid way
         follows = [len([f for f in db[k].split() if f != '\n'])
                    for k in db.keys() if '\n' not in k]
         return sum(follows)
 
-MarkovDB = plugins.DB('Markov', {'anydbm': DbmMarkovDB,
+MarkovDB = plugins.DB('Markov', {'dbm': DbmMarkovDB,
                                  'sqlalchemy': SqlAlchemyMarkovDB})
 
 class MarkovWorkQueue(threading.Thread):
