@@ -155,7 +155,7 @@ class SqlAlchemyMarkovDB(object):
         if not r:
             raise KeyError
         print('foo')
-        print(repr(r))
+        print((repr(r)))
         L = self._weightedChoice(r)
         isLast = False
         if not L[-1]:
@@ -237,10 +237,10 @@ class DbmMarkovDB(object):
         db = self._getDb(channel)
         # EW! but necessary since not all dbm backends support
         # "combined in db"
-        if db.has_key(pair):
-            db[pair] = ' '.join([db[pair], follow])
+        if pair.encode('utf-8') in db:
+            db[pair] = b' '.join([db[pair], follow.encode('utf-8')])
         else:
-            db[pair] = follow
+            db[pair] = follow.encode('utf-8')
         self._flush(db)
 
     def _combine(self, first, second):
@@ -274,29 +274,29 @@ class DbmMarkovDB(object):
 
     def firsts(self, channel):
         db = self._getDb(channel)
-        if db.has_key('\n \n'):
+        if b'\n \n' in db:
             return len(set(db['\n \n'].split()))
         else:
             return 0
 
     def lasts(self, channel):
         db = self._getDb(channel)
-        if db.has_key('\n'):
+        if b'\n' in db:
             return len(set(db['\n'].split()))
         else:
             return 0
 
     def pairs(self, channel):
         db = self._getDb(channel)
-        pairs = [k for k in db.keys() if '\n' not in k]
+        pairs = [k for k in db.keys() if b'\n' not in k]
         return len(pairs)
 
     def follows(self, channel):
         db = self._getDb(channel)
         # dbm sucks in that we're not guaranteed to have .iteritems()
         # *cough*gdbm*cough*, so this has to be done the stupid way
-        follows = [len([f for f in db[k].split() if f != '\n'])
-                   for k in db.keys() if '\n' not in k]
+        follows = [len([f for f in db[k].split() if f != b'\n'])
+                   for k in db.keys() if b'\n' not in k]
         return sum(follows)
 
 MarkovDB = plugins.DB('Markov', {'dbm': DbmMarkovDB,
