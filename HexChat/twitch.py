@@ -11,8 +11,8 @@ __module_description__ = 'Better integration with Twitch.tv'
 # Commands from http://help.twitch.tv/customer/portal/articles/659095-chat-moderation-commands
 # /ban may conflict with other scripts nothing we can do about that
 # /clear is an existing command, just override it
-commands = ['timeout', 'slow', 'slowoff', 'subscribers', 'subscribersoff',
-			'mod', 'unmod', 'mods', 'clear', 'ban', 'unban', 'commercial']
+commands = ('timeout', 'slow', 'slowoff', 'subscribers', 'subscribersoff',
+			'mod', 'unmod', 'mods', 'clear', 'ban', 'unban', 'commercial')
 
 aliases = {'op':'mod', 'deop':'unmod'}
 
