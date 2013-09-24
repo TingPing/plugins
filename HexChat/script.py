@@ -24,6 +24,7 @@ addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 addon_types = ('py', 'pl', 'lua', 'js') # tcl has no way to unload a single script?
 addon_sites = ('http://raw.github.com/TingPing/plugins/master/HexChat/',
 				'http://raw.github.com/Arnavion/random/master/hexchat/',
+				'http://raw.github.com/Farow/hexchat-scripts/master/',
 				'http://orvp.net/xchat/')
 
 
