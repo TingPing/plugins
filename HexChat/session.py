@@ -27,7 +27,7 @@ def quit_cb(word, word_eol, userdata):
 	networks = {}
 
 	for chan in hexchat.get_list('channels'):
-		if chan.type != 1:
+		if chan.type == 2 or chan.type == 3: # Ignore notices and server tabs
 			if not chan.network in networks:
 				networks[chan.network] = []
 			if (chan.channelkey):
