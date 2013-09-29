@@ -40,6 +40,7 @@ def quit_cb(word, word_eol, userdata):
 		hexchat.find_context(server=network).command('quit')
 		
 	hexchat.command('timer 1 killall')
+	return hexchat.EAT_ALL
 
 def unload_cb(userdata):
 	print(__module_name__, 'version', __module_version__, 'unloaded.')
