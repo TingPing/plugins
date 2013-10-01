@@ -11,7 +11,7 @@ except ImportError:
 	xchat.prnt('\002\00304Growl Error:\017 Please install \037https://github.com/kfdm/gntp\017')
 	xchat.command('timer 0.1 unload growl.py')
 
-hexchatlogo = 'https://raw.github.com/hexchat/hexchat/master/src/pixmaps/hexchat.png'
+hexchatlogo = 'https://github.com/hexchat/hexchat/raw/master/data/icons/hexchat.png'
 lasttime = time()
 lastnick = ''
 lasterrtime = 0
