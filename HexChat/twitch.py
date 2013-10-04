@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = 'Twitch'
 __module_author__ = 'TingPing'
-__module_version__ = '0'
+__module_version__ = '1'
 __module_description__ = 'Better integration with Twitch.tv'
 # Very much a work in progress...
 
@@ -26,11 +26,13 @@ def servererr_cb(word, word_eol, userdata):
 	if is_twitch():
 		return hexchat.EAT_ALL
 
-# Print jtv messages in front tab.. to improve.
-def msg_cb(word, word_eol, userdata):
-	if is_twitch() and hexchat.nickcmp(word[0], 'jtv') == 0:
-		hexchat.find_context().emit_print('Private Message', word[0], word[1])
-		return hexchat.EAT_ALL
+# Print jtv messages in server tab.
+def privmsg_cb(word, word_eol, userdata):
+	if is_twitch():
+		if word[0][1:4] == 'jtv':
+			hexchat.find_context(channel=hexchat.get_info('network')).set()
+			hexchat.emit_print('Server Text', word_eol[3][1:])
+			return hexchat.EAT_ALL
 
 # Eat any message starting with a '.', twitch eats all of them too.
 def yourmsg_cb(word, word_eol, userdata):
@@ -53,6 +55,6 @@ for command in commands:
 	hexchat.hook_command(command, command_cb)
 for command, alias in aliases.items():
 	hexchat.hook_command(command, command_cb, alias)
-hexchat.hook_print('Private Message to Dialog', msg_cb)
 hexchat.hook_print('Your Message', yourmsg_cb)
 hexchat.hook_server('421', servererr_cb)
+hexchat.hook_server('PRIVMSG', privmsg_cb)
