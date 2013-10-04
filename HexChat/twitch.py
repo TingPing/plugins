@@ -6,8 +6,6 @@ __module_version__ = '1'
 __module_description__ = 'Better integration with Twitch.tv'
 # Very much a work in progress...
 
-# Best used with my 'mymsg.py' script so you can sync your messages with the web clients.
-
 # Commands from http://help.twitch.tv/customer/portal/articles/659095-chat-moderation-commands
 # /ban may conflict with other scripts nothing we can do about that
 # /clear is an existing command, just override it
