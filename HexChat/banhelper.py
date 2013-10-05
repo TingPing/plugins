@@ -3,7 +3,7 @@ import hexchat
 
 __module_name__ = "Banhelper"
 __module_author__ = "TingPing"
-__module_version__ = "3"
+__module_version__ = "4"
 __module_description__ = "Simplifies banning and quieting"
 
 wasop = False
@@ -35,7 +35,15 @@ def do_op(deop=False):
 			wasop = True
 	else:
 		if not wasop:
-			hexchat.command('timer .6 cs deop {}'.format(chan))
+			hexchat.command('cs deop {}'.format(chan))
+
+def do_command(cmd):
+	if is_op():
+		hexchat.command(cmd)
+		do_op(deop=True)
+		return False
+
+	return True
 		
 def get_mask(nick):
 	invalid_chars = ['*', '?', '!', '@', '$']
@@ -63,13 +71,13 @@ def ban_cb(word, word_eol, userdata):
 		if mask:
 			do_op()
 			if word[0] == 'ban':
-				hexchat.command('timer .5 mode +b {}'.format(mask))
-			elif word[0] == 'kickban': 
-				hexchat.command('timer .5 mode +b {}'.format(mask))
-				hexchat.command('timer .5 kick {}'.format(word[1])) 
+				hexchat.hook_timer(100, do_command, 'mode +b {}'.format(mask))
+			elif word[0] == 'kickban':
+				nick = word[1]
+				chan = hexchat.get_info('channel')
+				hexchat.hook_timer(100, do_command, 'mode +b {}\r\nKICK {} {}'.format(mask, chan, nick))
 			elif word[0] == 'quiet':
-				hexchat.command('timer .5 mode +q {}'.format(mask))
-			do_op(deop=True)
+				hexchat.hook_timer(100, do_command, 'mode +q {}'.format(mask))
 		return hexchat.EAT_HEXCHAT
 	else:			
 		return hexchat.EAT_NONE
