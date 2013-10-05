@@ -35,7 +35,7 @@ def do_op(deop=False):
 			wasop = True
 	else:
 		if not wasop:
-			hexchat.command('timer .5 cs deop {}'.format(chan))
+			hexchat.command('timer .6 cs deop {}'.format(chan))
 		
 def get_mask(nick):
 	invalid_chars = ['*', '?', '!', '@', '$']
@@ -63,12 +63,12 @@ def ban_cb(word, word_eol, userdata):
 		if mask:
 			do_op()
 			if word[0] == 'ban':
-				hexchat.command('timer .3 mode +b {}'.format(mask))
+				hexchat.command('timer .5 mode +b {}'.format(mask))
 			elif word[0] == 'kickban': 
-				hexchat.command('timer .3 mode +b {}'.format(mask))
-				hexchat.command('timer .3 kick {}'.format(word[1])) 
+				hexchat.command('timer .5 mode +b {}'.format(mask))
+				hexchat.command('timer .5 kick {}'.format(word[1])) 
 			elif word[0] == 'quiet':
-				hexchat.command('timer .3 mode +q {}'.format(mask))
+				hexchat.command('timer .5 mode +q {}'.format(mask))
 			do_op(deop=True)
 		return hexchat.EAT_HEXCHAT
 	else:			
