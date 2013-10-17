@@ -1,4 +1,3 @@
-import re
 import hexchat
 
 __module_name__ = "Banhelper"
