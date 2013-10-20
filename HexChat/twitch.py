@@ -15,7 +15,8 @@ commands = ('timeout', 'slow', 'slowoff', 'subscribers', 'subscribersoff',
 aliases = {'op':'mod', 'deop':'unmod'}
 
 def is_twitch():
-	if 'twitch.tv' in hexchat.get_info('server'):
+	server = hexchat.get_info('server')
+	if 'twitch.tv' in server or 'justin.tv' in server:
 		return True
 	else: return False
 
