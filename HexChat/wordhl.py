@@ -9,7 +9,7 @@ __module_description__ = 'Highlights some words of importance'
 hlwords = ('hexchat', )
 edited = False
 
-def print_cb(word, word_eol, userdata, attr):
+def print_cb(word, word_eol, event, attr):
 	global edited
 	if edited or attr.time: # Ignore our own events or bouncer playback
 		return
@@ -20,10 +20,11 @@ def print_cb(word, word_eol, userdata, attr):
 			msg = msg.replace(_word, '\00319' + _word + '\00399').strip() # Color green
 
 		edited = True
-		hexchat.emit_print('Channel Message', word[0], msg)
+		hexchat.emit_print(event, word[0], msg)
 		edited = False
 
 		hexchat.command('gui color 3')
 		return hexchat.EAT_ALL
 
-hexchat.hook_print_attrs('Channel Message', print_cb)
+hexchat.hook_print_attrs('Channel Message', print_cb, 'Channel Message')
+hexchat.hook_print_attrs('Channel Action', print_cb, 'Channel Action')
