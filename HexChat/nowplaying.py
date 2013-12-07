@@ -1,136 +1,71 @@
-import dbus
+from __future__ import print_function
 import hexchat
 
-__module_name__ = "NowPlaying"
-__module_author__ = "TingPing"
-__module_version__ = "0"
-__module_description__ = "Announce Pithos or Audacious Songs"
+__module_name__ = 'NowPlaying'
+__module_author__ = 'TingPing'
+__module_version__ = '1'
+__module_description__ = 'Announce songs from mpris2 clients'
 
-# This is just me duct-taping two of my scripts together
-# Don't expect adding players to this list.
+try:
+	import dbus
+	from dbus.mainloop.glib import DBusGMainLoop
+	import pympris
+	print(__module_name__, 'version', __module_version__, 'loaded.')
+except ImportError:
+	print('NP: Please install python-dbus and pympris.')
+	hexchat.command('timer 0.1 py unload NowPlaying')
 
-np_help_msg = 'NP: Valid commands are (see /help for specifics):\n \
-  				np [option] [value]\n \
-					audacious [option]\n \
-					audacious [option]\n \
-					pithos [option]\n \
-					(without args sends to default player)'
-					
-aud_help_msg = 'AUD: Valid commands are:\n \
-					info (prints song)\n \
-					(without args sends to chan)'
-					
-pithos_help_msg = 'PITHOS: Valid commands are:\n \
-					info (prints song)\n \
-					next (skips song)\n \
-					love\n \
-					hate\n \
-					(without args sends to chan)'
+np_help = 'NP [player]'
 
-session_bus = dbus.SessionBus()
+session_bus = dbus.SessionBus(mainloop=DBusGMainLoop())
 
-def get_player(name):
-	if name == 'audacious':
-		bus_object = ['org.mpris.audacious', '/Player']
-	elif name == 'pithos':
-		bus_object = ['net.kevinmehall.Pithos', '/net/kevinmehall/Pithos']
-	
+def print_nowplaying(mp, echo=False):
+	metadata = mp.player.Metadata
+
 	try:
-		player = session_bus.get_object(bus_object[0], bus_object[1])
-		return player
-	except (dbus.exceptions.DBusException, TypeError):
-		print('NP: Could not find player.')
-		return None
-		
-def print_song(title, artist, album, echo=False):
-	# TODO: customization
+		title = metadata['xesam:title']
+		artist = metadata['xesam:artist'][0]
+		album = metadata['xesam:album']
+	except KeyError:
+		print('NP: Song info not found.')
+		return
+
+	# TODO: Settings for these
 	if echo:
-		cmd = 'echo NP: %s by %s on %s.'%(title, artist, album)
+		cmd = 'echo NP: {} by {} on {}.'.format(title, artist, album)
 	elif hexchat.get_pluginpref('np_say'):
-		cmd = 'say Now playing %s by %s on %s.'%(title, artist, album)
+		cmd = 'say Now playing {} by {} on {}.'.format(title, artist, album)
 	else:
-		cmd = 'me is now playing %s by %s on %s.'%(title, artist, album)
-		
+		cmd = 'me is now playing {} by {} on {}.'.format(title, artist, album)
+
 	hexchat.command(cmd)
-	
-			
-def audacious_cb(word, word_eol, userdata):
-	player = get_player('audacious')
-	if not player:
-		return hexchat.EAT_ALL
-		
-	song = player.GetMetadata()
-
-	if len(word) > 1:
-		if word[1].lower() == 'info':
-			try:
-				print_song(song['title'], song['artist'], song['album'], echo=True)
-			except KeyError:
-				print('NP: Failed to get song information')
-		else:
-			print('Audacious: Valid commands are: info, or without args to announce')
-	else:
-		try:
-			print_song(song['title'], song['artist'], song['album'])
-		except KeyError:
-			print('Audacious: Failed to get song information')
-	return hexchat.EAT_ALL
-
-def pithos_cb(word, word_eol, userdata):
-	player = get_player('pithos')
-	if not player:
-		return hexchat.EAT_ALL
-
-	song = player.GetCurrentSong()
-
-	if len(word) > 1:
-		if word[1].lower() == 'info':
-			print_song(song['title'], song['artist'], song['album'], echo=True)
-		elif word[1].lower() == 'next':
-			player.SkipSong()
-		elif word[1].lower() == 'love':
-			player.LoveCurrentSong()
-		elif word[1].lower() == 'hate':
-			player.BanCurrentSong()
-		else:
-			print('Pithos: Valid commands are: info, next, love, hate, or without args to announce')
-	else:
-		print_song(song['title'], song['artist'], song['album'])
-	return hexchat.EAT_ALL
-
 
 def np_cb(word, word_eol, userdata):
-	if len(word) > 1:
-		if len(word) > 2:
-			if word[1].lower() == 'default':
-				if hexchat.set_pluginpref('np_default', word[2]):
-					print('NP: Default set to %s' %word[2])				
-			elif word[1].lower() == 'say':
-				try:
-					if hexchat.set_pluginpref('np_say', bool(int(word[2]))):
-						print('NP: Say set to %r' %bool(int(word[2])))
-				except ValueError:
-					print('NP: Setting must be a 1 or 0')
-	else:
-		if hexchat.get_pluginpref('np_default'):
-			default = hexchat.get_pluginpref('np_default').lower()
-		else:
-			print('NP: No valid default set, use /np default <player> to set one')
-			return hexchat.EAT_ALL	
-		if default == 'pithos':
-			pithos_cb(word, word_eol, userdata)
-		elif default == 'audacious':
-			audacious_cb(word, word_eol, userdata)
-		else:
-			print('NP: No valid default set, use /np default <player> to set one')
-	return hexchat.EAT_ALL
-	
-def unload_cb(userdata):
-	print(__module_name__ + ' version ' + __module_version__ + ' unloaded.')
+	player_ids = tuple(pympris.available_players())
+	player_num = len(player_ids)
+	player_names = [pympris.MediaPlayer(_id).root.Identity for _id in player_ids]
 
-hexchat.hook_command("pithos", pithos_cb, help=pithos_help_msg)
-hexchat.hook_command("audacious", audacious_cb, help=aud_help_msg)
-hexchat.hook_command("aud", audacious_cb, help=aud_help_msg)
-hexchat.hook_command("np", np_cb, help=np_help_msg)
+	# TODO: commands for next/pause
+	if player_num == 0:
+		print('NP: No player found running.')
+	elif player_num == 1:
+		mp = pympris.MediaPlayer(player_ids[0], session_bus)
+		print_nowplaying(mp)
+	elif len(word) == 2:
+		player = word[1]
+		if player in player_names:
+			index = player_names.index(player)
+			mp = pympris.MediaPlayer(player_ids[index])
+			print_nowplaying(mp)
+		else:
+			print('NP: Player {} not found.'.format(player))
+	else:
+		print('You have multple players running please insert a name:\n\t', ' '.join(player_names))
+
+	return hexchat.EAT_ALL
+
+def unload_cb(userdata):
+	print(__module_name__, 'version', __module_version__, 'unloaded.')
+
+hexchat.hook_command('np', np_cb, help=np_help)
 hexchat.hook_unload(unload_cb)
-hexchat.prnt(__module_name__ + ' version ' + __module_version__ + ' loaded.')
