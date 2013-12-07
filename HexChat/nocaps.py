@@ -9,7 +9,7 @@ __module_description__ = 'Lowercase all cap messages'
 cap_percentage = 0.6
 
 events = ['Channel Message', 'Channel Msg Hillight',
-		'Channel Action', 'Channel Action Hillight', 
+		'Channel Action', 'Channel Action Hilight', 
 		'Private Action', 'Private Action to Dialog',
 		'Private Message', 'Private Message to Dialog']
 
