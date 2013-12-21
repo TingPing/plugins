@@ -3,13 +3,20 @@
 
 import dbus
 from dbus.mainloop.glib import DBusGMainLoop
+DBusGMainLoop(set_as_default=True)
 
 import hexchat
 
 __module_author__= 'TingPing'
 __module_name__ = 'screensaver'
-__module_version__ = '1'
+__module_version__ = '2'
 __module_description__ = 'Sets user away when the GNOME screensaver is activated'
+
+screensavers = ('org.gnome.ScreenSaver',
+		'org.cinnamon.ScreenSaver',
+		'org.freedesktop.ScreenSaver')
+
+sesbus = dbus.SessionBus()
 
 def screensaver_cb(state):
 	if state:
@@ -20,10 +27,9 @@ def screensaver_cb(state):
 def unload_cb(userdata):
 	print(__module_name__ + ' version ' + __module_version__ + ' unloaded.')
 
-DBusGMainLoop(set_as_default=True)
-sesbus = dbus.SessionBus()
-sesbus.add_signal_receiver(screensaver_cb, 'SessionIdleChanged', 'org.gnome.ScreenSaver')
-sesbus.add_signal_receiver(screensaver_cb, 'ActiveChanged', 'org.gnome.ScreenSaver')
+
+for screensaver in screensavers:
+	sesbus.add_signal_receiver(screensaver_cb, 'ActiveChanged', screensaver)
 
 hexchat.hook_unload(unload_cb)
 print(__module_name__ + ' version ' + __module_version__ + ' loaded.')
