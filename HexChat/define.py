@@ -23,8 +23,8 @@ help_str = 'Define Usage: /define word [number]\n\tnumber being alternate defini
 
 # From http://blog.abhijeetr.com/2011/11/google-dictionary-api-example-in-python.html
 def asciirepl(match):
-  s = match.group()  
-  return '\\u00' + match.group()[2:]
+	s = match.group()  
+	return '\\u00' + match.group()[2:]
 
 def define(word, word_eol, userdata):
 
