@@ -29,12 +29,10 @@ def msg_cb(word, word_eol, event, attrs):
 
 	color = modes[word[2]]
 	nick = '\003{}{}\00399'.format(color, hexchat.strip(word[0]))
+	word = [(word[i] if len(word) > i else '') for i in range(4)]
 
 	edited = True
-	if len(word) == 4: # For those few id-msg users
-		hexchat.emit_print(event, nick, word[1], word[2], word[3], time=attrs.time)
-	else:
-		hexchat.emit_print(event, nick, word[1], word[2], time=attrs.time)
+	hexchat.emit_print(event, nick, word[1], word[2], word[3], time=attrs.time)
 	edited = False
 
 	return hexchat.EAT_ALL
