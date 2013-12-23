@@ -24,9 +24,9 @@ def highlight_callback(word, word_eol, user_data):
 	channel = hexchat.get_info('channel')
 	
 	if user_data == 'Channel Msg Hilight':
-		highlight_context.prnt('{0}\t\00320<{4}{3}{1}>\00399 {2}'.format(channel, word[0], word[1], word[2], word[3]))
+		highlight_context.prnt('{0}\t\00318<{4}{3}{1}>\017 {2}'.format(channel, word[0], word[1], word[2], word[3]))
 	elif user_data == 'Channel Action Hilight':
-		highlight_context.prnt('{0}\t\00320{4}{3}{1}\00399 {2}'.format(channel, word[0], word[1], word[2], word[3]))	
+		highlight_context.prnt('{0}\t\002\00318{4}{3}{1}\017 {2}'.format(channel, word[0], word[1], word[2], word[3]))	
 
 	highlight_context.command('gui color 3')
 	
