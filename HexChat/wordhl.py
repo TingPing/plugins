@@ -17,7 +17,7 @@ def print_cb(word, word_eol, event, attr):
 	if any(_word in word[1] for _word in hlwords):
 		msg = word[1]
 		for _word in hlwords:
-			msg = msg.replace(_word, '\00319' + _word + '\00399').strip() # Color green
+			msg = msg.replace(_word, '\00320' + _word + '\00399').strip() # Color red
 
 		edited = True
 		hexchat.emit_print(event, word[0], msg)
