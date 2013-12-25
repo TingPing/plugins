@@ -26,5 +26,5 @@ def print_cb(word, word_eol, event, attr):
 		hexchat.command('gui color 3')
 		return hexchat.EAT_ALL
 
-hexchat.hook_print_attrs('Channel Message', print_cb, 'Channel Message', pri=hexchat.PRI_HIGH)
-hexchat.hook_print_attrs('Channel Action', print_cb, 'Channel Action', pri=hexchat.PRI_HIGH)
+hexchat.hook_print_attrs('Channel Message', print_cb, 'Channel Message', priority=hexchat.PRI_HIGH)
+hexchat.hook_print_attrs('Channel Action', print_cb, 'Channel Action', priority=hexchat.PRI_HIGH)
