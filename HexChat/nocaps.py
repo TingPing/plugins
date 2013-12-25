@@ -26,4 +26,4 @@ def msg_cb(words, word_eol, print_type):
 		return hexchat.EAT_ALL
 
 for event in events:
-	hexchat.hook_print(event, msg_cb, event)
+	hexchat.hook_print(event, msg_cb, event, priority=hexchat.PRI_HIGH)
