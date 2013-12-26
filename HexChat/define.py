@@ -3,7 +3,7 @@ import sys
 import json
 import re
 
-if sys.version_info[0] == 2: # Untested
+if sys.version_info[0] == 2:
 	import HTMLParser as htmlparser
 	import urllib as request
 	from cgi import escape
@@ -38,10 +38,11 @@ def define(word, word_eol, userdata):
 		return hexchat.EAT_ALL
 
 	url = 'http://www.google.com/dictionary/json?callback=s&q={}&sl=en&tl=en&restrict=pr,de&client=te'.format(escape(define_word))
-	with request.urlopen(url) as response:
-		content = response.read()[2:-10].decode('utf-8')
-		ascii = re.compile(r'\\x(\w{2})')
-		content = ascii.sub(asciirepl, content)
+	response = request.urlopen(url)
+	content = response.read()[2:-10].decode('utf-8')
+	ascii = re.compile(r'\\x(\w{2})')
+	content = ascii.sub(asciirepl, content)
+	response.close()
 	
 	parser = htmlparser.HTMLParser()
 	dic = json.loads(content)
