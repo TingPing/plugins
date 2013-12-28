@@ -1,21 +1,27 @@
+from __future__ import print_function
+
 import os
 import sys
 import json
 import threading
-import urllib.error
-import urllib.request
+
+if sys.version_info[0] == 2:
+	import urllib2 as urllib_error
+	import urllib as urllib_request
+else:
+	import urllib.error as urllib_error
+	import urllib.request as urllib_request
 
 import hexchat
 
 __module_name__ = 'Script'
 __module_author__ = 'TingPing'
-__module_version__ = '4'
+__module_version__ = '5'
 __module_description__ = 'Manage scripts'
 
 # TODO:
 # add preference for adding repos
 # search subfolders
-# python2 support on Linux, error on Windows
 # command to refresh cache
 
 script_help = 'Script: Valid commands are:\n \
@@ -52,11 +58,12 @@ def update_addons():
 
 	for site in addon_sites:
 		try:
-			with urllib.request.urlopen(build_url(site, type='api')) as response:
-				text = response.read().decode('utf-8')
-				data = json.loads(text)
-				addon_cache[site] = [d['name'] for d in data if d['name'].split('.')[-1] in addon_types]
-		except urllib.error.HTTPError: # 403 after rate-limit
+			response = urllib_request.urlopen(build_url(site, type='api'))
+			text = response.read().decode('utf-8')
+			response.close()
+			data = json.loads(text)
+			addon_cache[site] = [d['name'] for d in data if d['name'].split('.')[-1] in addon_types]
+		except urllib_error.HTTPError: # 403 after rate-limit
 			pass
 
 	print('Script: Addon cache updated.')
@@ -66,8 +73,8 @@ def download(script):
 		if script in addon_cache[site]:
 			print('Script: Downloading {}...'.format(script))
 			try:
-				urllib.request.urlretrieve(build_url(site, type='raw', script=script), expand_script(script))
-			except urllib.error.HTTPError as err:
+				urllib_request.urlretrieve(build_url(site, type='raw', script=script), expand_script(script))
+			except urllib_error.HTTPError as err:
 				print('Script: Error downloading {} ({})'.format(script, err))
 			else:
 				print('Script: Download complete, loading...')
