@@ -68,7 +68,7 @@ def update_addons():
 
 	print('Script: Addon cache updated.')
 
-def download(script):
+def download(script, unload):
 	for site in addon_cache.keys():
 		if script in addon_cache[site]:
 			print('Script: Downloading {}...'.format(script))
@@ -77,16 +77,19 @@ def download(script):
 			except urllib_error.HTTPError as err:
 				print('Script: Error downloading {} ({})'.format(script, err))
 			else:
-				print('Script: Download complete, loading...')
-				hexchat.command('load {}'.format(expand_script(script)))
+				print('Script: Download complete, {}...'.format('reloading' if unload else 'loading'))
+				if unload: # Updated
+					# Threading causes odd timing issues, using timer fixes it.
+					hexchat.command('timer .1 unload {}'.format(expand_script(script)))
+				hexchat.command('timer .1 load {}'.format(expand_script(script)))
 			
 			return
 
 	print('Script: Could not find {}'.format(script))
 
 
-def install(script):
-	threading.Thread(target=download, args=(script,)).start()
+def install(script, unload):
+	threading.Thread(target=download, args=(script, unload)).start()
 
 def search(word):
 	matches = [(site, script) for site in addon_cache.keys() for script in addon_cache[site] if word in script]
@@ -112,10 +115,10 @@ def script_cb(word, word_eol, userdata):
 			print('Script: {} is already installed.'.format(arg))
 			return hexchat.EAT_ALL
 		else:
-			install(arg)
+			install(arg, False)
 	elif cmd == 'update':
 		if os.path.exists(expand_script(arg)):
-			install(arg)
+			install(arg, True)
 	elif cmd == 'edit':
 		hexchat.command('url ' + expand_script(arg))
 	elif cmd == 'search':
