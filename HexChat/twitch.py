@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = 'Twitch'
 __module_author__ = 'TingPing'
-__module_version__ = '1'
+__module_version__ = '2'
 __module_description__ = 'Better integration with Twitch.tv'
 # Very much a work in progress...
 
@@ -14,41 +14,45 @@ commands = ('timeout', 'slow', 'slowoff', 'subscribers', 'subscribersoff',
 
 aliases = {'op':'mod', 'deop':'unmod'}
 
-def is_twitch():
-	server = hexchat.get_info('server')
-	if 'twitch.tv' in server or 'justin.tv' in server:
-		return True
-	else: return False
+def twitchOnly(func):
+	def is_twitch(*args, **kwargs):
+		server = hexchat.get_info('server')
+		if 'twitch.tv' in server or 'justin.tv' in server:
+			return func(*args, **kwargs)
+		else:
+			return hexchat.EAT_NONE
+	return is_twitch
 
 # Twitch returns a lot of 'unknown command' errors, ignore them.
+@twitchOnly
 def servererr_cb(word, word_eol, userdata):
-	if is_twitch():
-		return hexchat.EAT_ALL
+	return hexchat.EAT_ALL
 
 # Print jtv messages in server tab.
+@twitchOnly
 def privmsg_cb(word, word_eol, userdata):
-	if is_twitch():
-		if word[0][1:4] == 'jtv':
-			hexchat.find_context(channel=hexchat.get_info('network')).set()
-			hexchat.emit_print('Server Text', word_eol[3][1:])
-			return hexchat.EAT_ALL
+	if word[0][1:4] == 'jtv':
+		hexchat.find_context(channel=hexchat.get_info('network')).set()
+		hexchat.emit_print('Server Text', word_eol[3][1:])
+		return hexchat.EAT_ALL
 
 # Eat any message starting with a '.', twitch eats all of them too.
+@twitchOnly
 def yourmsg_cb(word, word_eol, userdata):
-	if is_twitch() and word[1][0] == '.':
+	if word[1][0] == '.':
 		return hexchat.EAT_ALL
 
 # Just prefix with a '.'.
+@twitchOnly
 def command_cb(word, word_eol, alias):
-	if is_twitch():
-		if alias:
-			if len(word_eol) > 1:
-				hexchat.command('say .{} {}'.format(alias, word_eol[1]))
-			else:
-				hexchat.command('say .{}'.format(alias))
+	if alias:
+		if len(word_eol) > 1:
+			hexchat.command('say .{} {}'.format(alias, word_eol[1]))
 		else:
-			hexchat.command('say .{}'.format(word_eol[0]))
-		return hexchat.EAT_ALL
+			hexchat.command('say .{}'.format(alias))
+	else:
+		hexchat.command('say .{}'.format(word_eol[0]))
+	return hexchat.EAT_ALL
 
 for command in commands:
 	hexchat.hook_command(command, command_cb)
