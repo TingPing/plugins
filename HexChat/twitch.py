@@ -10,7 +10,8 @@ __module_description__ = 'Better integration with Twitch.tv'
 # /ban may conflict with other scripts nothing we can do about that
 # /clear is an existing command, just override it
 commands = ('timeout', 'slow', 'slowoff', 'subscribers', 'subscribersoff',
-			'mod', 'unmod', 'mods', 'clear', 'ban', 'unban', 'commercial')
+			'mod', 'unmod', 'mods', 'clear', 'ban', 'unban', 'commercial',
+			'r9kbeta', 'r9kbetaoff')
 
 aliases = {'op':'mod', 'deop':'unmod'}
 
