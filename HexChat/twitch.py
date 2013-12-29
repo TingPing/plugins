@@ -16,13 +16,13 @@ commands = ('timeout', 'slow', 'slowoff', 'subscribers', 'subscribersoff',
 aliases = {'op':'mod', 'deop':'unmod'}
 
 def twitchOnly(func):
-	def is_twitch(*args, **kwargs):
+	def if_twitch(*args, **kwargs):
 		server = hexchat.get_info('server')
-		if 'twitch.tv' in server or 'justin.tv' in server:
+		if server and ('twitch.tv' in server or 'justin.tv' in server):
 			return func(*args, **kwargs)
 		else:
 			return hexchat.EAT_NONE
-	return is_twitch
+	return if_twitch
 
 # Twitch returns a lot of 'unknown command' errors, ignore them.
 @twitchOnly
