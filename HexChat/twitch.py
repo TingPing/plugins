@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = 'Twitch'
 __module_author__ = 'TingPing'
-__module_version__ = '2'
+__module_version__ = '3'
 __module_description__ = 'Better integration with Twitch.tv'
 # Very much a work in progress...
 
@@ -32,8 +32,10 @@ def servererr_cb(word, word_eol, userdata):
 # Print jtv messages in server tab.
 @twitchOnly
 def privmsg_cb(word, word_eol, userdata):
-	if word[0][1:4] == 'jtv':
-		hexchat.find_context(channel=hexchat.get_info('network')).set()
+	if word[0][1:].split('!')[0] == 'jtv':
+		for chan in hexchat.get_list('channels'):
+			if chan.type == 1 and chan.id == hexchat.get_prefs('id'):
+				chan.context.set()
 		hexchat.emit_print('Server Text', word_eol[3][1:])
 		return hexchat.EAT_ALL
 
