@@ -9,8 +9,13 @@ TAB_NAME = '(highlights)'
 
 def find_highlighttab():
 	context = hexchat.find_context(channel=TAB_NAME)
-	if context == None:
+	if context == None: # Create a new one in the background
+		newtofront = hexchat.get_prefs('gui_tab_newtofront')
+
+		hexchat.command('set -quiet gui_tab_newtofront 0')
 		hexchat.command('newserver -noconnect {0}'.format(TAB_NAME))
+		hexchat.command('set -quiet gui_tab_newtofront {}'.format(newtofront))
+
 		return hexchat.find_context(channel=TAB_NAME)
 	else:
 		return context
@@ -24,11 +29,12 @@ def highlight_callback(word, word_eol, user_data):
 	channel = hexchat.get_info('channel')
 	
 	if user_data == 'Channel Msg Hilight':
-		highlight_context.prnt('\00322{0}\t\00318<{4}{3}{1}>\017 {2}'.format(channel, word[0], word[1], word[2], word[3]))
+		highlight_context.prnt('\00322{0}\t\00318<{4}{3}{1}>\017 {2}'.format(channel, *word))
 	elif user_data == 'Channel Action Hilight':
-		highlight_context.prnt('\00322{0}\t\002\00318{4}{3}{1}\017 {2}'.format(channel, word[0], word[1], word[2], word[3]))	
+		highlight_context.prnt('\00322{0}\t\002\00318{4}{3}{1}\017 {2}'.format(channel, *word))	
 
-	highlight_context.command('gui color 3')
+	# Can't easily intelligently manage color so lets just ignore it
+	highlight_context.command('gui color 0')
 	
 	return hexchat.EAT_NONE
 
