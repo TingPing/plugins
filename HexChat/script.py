@@ -5,9 +5,14 @@ import sys
 import json
 import threading
 
+THREADS_SUPPORTED = True
 if sys.version_info[0] == 2:
 	import urllib2 as urllib_error
 	import urllib as urllib_request
+
+	# Avoid threads on py2/win32. This will lockup HexChat
+	if sys.platform == 'win32':
+		THREADS_SUPPORTED = False
 else:
 	import urllib.error as urllib_error
 	import urllib.request as urllib_request
@@ -16,7 +21,7 @@ import hexchat
 
 __module_name__ = 'Script'
 __module_author__ = 'TingPing'
-__module_version__ = '5'
+__module_version__ = '6'
 __module_description__ = 'Manage scripts'
 
 # TODO:
@@ -89,7 +94,10 @@ def download(script, unload):
 
 
 def install(script, unload):
-	threading.Thread(target=download, args=(script, unload)).start()
+	if THREADS_SUPPORTED:
+		threading.Thread(target=download, args=(script, unload)).start()
+	else:
+		download(script, unload)
 
 def search(word):
 	matches = [(site, script) for site in addon_cache.keys() for script in addon_cache[site] if word in script]
@@ -140,7 +148,10 @@ def script_cb(word, word_eol, userdata):
 def unload_callback(userdata):
 	print(__module_name__, 'version', __module_version__, 'unloaded.')
 
-threading.Thread(target=update_addons).start()
+if THREADS_SUPPORTED:
+	threading.Thread(target=update_addons).start()
+else:
+	update_addons()
 hexchat.hook_command('script', script_cb, help=script_help)
 hexchat.hook_unload(unload_callback)
 print(__module_name__, 'version', __module_version__, 'loaded.')
