@@ -128,7 +128,11 @@ def script_cb(word, word_eol, userdata):
 		if os.path.exists(expand_script(arg)):
 			install(arg, True)
 	elif cmd == 'edit':
-		hexchat.command('url ' + expand_script(arg))
+		if sys.platform.startswith('linux'):
+			# This will popup a choose program prompt /url doesn't
+			hexchat.command('exec -d gvfs-open {}'.format(expand_script(arg)))
+		else:
+			hexchat.command('url {}'.format(expand_script(arg)))
 	elif cmd == 'search':
 		search(arg)
 	elif cmd == 'remove':
