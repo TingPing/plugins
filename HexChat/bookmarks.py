@@ -32,6 +32,12 @@ def toggle_bookmark(chan, net): # It's a toggle because /menu sucks
 
 	if chan == '':
 		return
+
+	for channel in hexchat.get_list('channels'):
+		print(channel.network, net)
+		if channel.channel == chan:
+			if channel.type != 2: # Only bookmark channels
+				return
 			
 	if get_network(chan) == net:
 		hexchat.del_pluginpref('bookmark_' + chan)
