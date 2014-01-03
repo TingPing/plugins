@@ -29,12 +29,12 @@ __module_description__ = 'Manage scripts'
 # search subfolders
 # command to refresh cache
 
-script_help = 'Script: Valid commands are:\n \
-			INSTALL script\n \
-			SEARCH word\n \
-			EDIT script\n \
-			UPDATE script\n \
-			REMOVE script'
+script_help = """Script: Valid commands are:
+        INSTALL script
+        SEARCH word
+        EDIT script
+        UPDATE script
+        REMOVE script"""
 
 addon_dir = os.path.join(hexchat.get_info('configdir'), 'addons')
 addon_types = ('py', 'pl', 'lua', 'js') # tcl has no way to unload a single script?
