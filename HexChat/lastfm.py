@@ -51,8 +51,15 @@ def lfm_cb(word, word_eol, userdata):
 		return hexchat.EAT_ALL
 
 	data = json.loads(text)
-	track = data['recenttracks']['track'][0]
-	if not '@attr' in track or not track['@attr']['nowplaying']:
+	playing = False
+	try:
+		track = data['recenttracks']['track'][0]
+		if track['@attr']['nowplaying']:
+			playing = True
+	except (IndexError, KeyError):
+		playing = False
+	
+	if not playing:
 		print('Lastfm: No song currently playing')
 		return hexchat.EAT_ALL
 		
