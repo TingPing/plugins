@@ -41,7 +41,6 @@ addon_types = ('py', 'pl', 'lua', 'js') # tcl has no way to unload a single scri
 addon_cache = {}
 #               User,       Repo,      Folder
 addon_sites = (('TingPing', 'plugins', 'HexChat'),
-				('Arnavion', 'random', 'hexchat'),
 				('Farow', 'hexchat-scripts', ''))
 
 
