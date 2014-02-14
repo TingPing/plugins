@@ -17,7 +17,7 @@ aliases = {'op':'mod', 'deop':'unmod'}
 
 def twitchOnly(func):
 	def if_twitch(*args, **kwargs):
-		server = hexchat.get_info('server')
+		server = hexchat.get_info('host')
 		if server and ('twitch.tv' in server or 'justin.tv' in server):
 			return func(*args, **kwargs)
 		else:
