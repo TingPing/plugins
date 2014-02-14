@@ -11,7 +11,7 @@ __module_description__ = 'Better integration with Twitch.tv'
 # /clear is an existing command, just override it
 commands = ('timeout', 'slow', 'slowoff', 'subscribers', 'subscribersoff',
 			'mod', 'unmod', 'mods', 'clear', 'ban', 'unban', 'commercial',
-			'r9kbeta', 'r9kbetaoff')
+			'r9kbeta', 'r9kbetaoff', 'color')
 
 aliases = {'op':'mod', 'deop':'unmod'}
 
