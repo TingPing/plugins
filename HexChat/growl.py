@@ -9,7 +9,7 @@ try:
 	import gntp.notifier
 except ImportError:
 	xchat.prnt('\002\00304Growl Error:\017 Please install \037https://github.com/kfdm/gntp\017')
-	xchat.command('timer 0.1 unload growl.py')
+	xchat.command('timer 0.1 py unload Growl')
 
 hexchatlogo = 'https://raw.github.com/hexchat/hexchat/master/data/icons/hexchat.png'
 lasttime = time()
@@ -38,10 +38,10 @@ except:
 
 def growlnotify(_type, title, desc='', pri=0):
 	if xchat.get_prefs('away_omit_alerts') and xchat.get_info('away'):
-		return None
+		return
 
 	if xchat.get_prefs('gui_focus_omitalerts') and xchat.get_info('win_status') == 'active':
-		return None
+		return
 
 	try:
 		growl.notify(
@@ -58,8 +58,6 @@ def growlnotify(_type, title, desc='', pri=0):
 		if lasterrtime + 60 < time():
 			xchat.prnt('Growl Error: Growl is not running.')
 		lasterrtime = time()
-
-	return None
 
 
 # now checks for and ignores mass hilights, performance impact not yet tested, maybe removed, optional, or only used on small channels
@@ -180,8 +178,6 @@ def tray_callback(word, word_eol, userdata):
 	if len(word) > 3 and word[1] == '-b':
 		growlnotify('Custom', word[2], word_eol[3], 1)
 		return xchat.EAT_ALL
-	
-	return xchat.EAT_NONE
 
 def unload_callback(userdata):
 	xchat.prnt(__module_name__ + ' version ' + __module_version__ + ' unloaded.')
