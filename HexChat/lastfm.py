@@ -14,7 +14,7 @@ import hexchat
 
 __module_name__ = 'lastfm'
 __module_author__ = 'TingPing'
-__module_version__ = '0'
+__module_version__ = '1'
 __module_description__ = 'Tell others what you are playing on last.fm'
 
 lfm_help = """Lastfm Usage:
@@ -29,6 +29,9 @@ def print_nowplaying(track, echo=False):
 		title = track['name']
 		artist = track['artist']['#text']
 		album = track['album']['#text']
+		title = title.encode('utf-8')
+		artist = artist.encode('utf-8')
+		album = album.encode('utf-8')
 	except KeyError:
 		print('Lastfm: Song info not found')
 		return
