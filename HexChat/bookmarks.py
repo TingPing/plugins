@@ -2,11 +2,15 @@ import hexchat
 
 __module_name__ = "Bookmarks"
 __module_author__ = "TingPing"
-__module_version__ = "1"
+__module_version__ = "2"
 __module_description__ = "Bookmark channels to easily rejoin them."
 
-def get_network(name):
-	return hexchat.get_pluginpref('bookmark_' + name)
+def get_networks(name):
+	pref = hexchat.get_pluginpref('bookmark_' + name)
+	if not pref:
+		return []
+	else:
+		return pref.split(',')
 
 def load_bookmarks():
 	hexchat.command('menu -p-2 add "$TAB/Bookmark" "bookmark %s"')
@@ -17,9 +21,9 @@ def load_bookmarks():
 	for pref in hexchat.list_pluginpref():
 		if pref[:9] == 'bookmark_':
 			chan = pref[9:]
-			net = get_network(chan)
-			hexchat.command('menu -p-2 add "Bookmarks/{}'.format(net))
-			hexchat.command('menu add "Bookmarks/{0}/{1}" "netjoin {1} {0}"'.format(net, chan))
+			for net in get_networks(chan):
+				hexchat.command('menu -p-2 add "Bookmarks/{}'.format(net))
+				hexchat.command('menu add "Bookmarks/{0}/{1}" "netjoin {1} {0}"'.format(net, chan))
 
 def toggle_bookmark(chan, net): # It's a toggle because /menu sucks
 	if chan == None:
@@ -38,12 +42,19 @@ def toggle_bookmark(chan, net): # It's a toggle because /menu sucks
 		if channel.channel == chan:
 			if channel.type != 2: # Only bookmark channels
 				return
-
-	if get_network(chan) == net:
-		hexchat.del_pluginpref('bookmark_' + chan)
+				
+	networks = get_networks(chan)
+	pref = 'bookmark_' + chan
+	if net in networks: # Remove
+		if len(networks) == 1:
+			hexchat.del_pluginpref(pref)
+		else:
+			networks.remove(net)
+			hexchat.set_pluginpref(pref, ','.join(networks))
 		hexchat.command('menu del "Bookmarks/{}/{}"'.format(net, chan))
-	else:
-		hexchat.set_pluginpref('bookmark_' + chan, net)
+	else: # Add
+		networks.append(net)
+		hexchat.set_pluginpref(pref, ','.join(networks))
 		hexchat.command('menu -p-2 add "Bookmarks/{}'.format(net))
 		hexchat.command('menu add "Bookmarks/{0}/{1}" "netjoin {1} {0}"'.format(net, chan))
 
