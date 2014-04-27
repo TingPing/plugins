@@ -24,20 +24,21 @@ def load_bookmarks():
 def toggle_bookmark(chan, net): # It's a toggle because /menu sucks
 	if chan == None:
 		chan = hexchat.get_info('channel')
+
+	if chan == '':
+		return
+
 	if net == None:
 		try: # If from a $TAB it may be a different network.
 			net = hexchat.find_context(None, chan).get_info('network')
 		except AttributeError:
 			net = hexchat.get_info('network')
 
-	if chan == '':
-		return
-
 	for channel in hexchat.get_list('channels'):
 		if channel.channel == chan:
 			if channel.type != 2: # Only bookmark channels
 				return
-			
+
 	if get_network(chan) == net:
 		hexchat.del_pluginpref('bookmark_' + chan)
 		hexchat.command('menu del "Bookmarks/{}/{}"'.format(net, chan))
@@ -58,7 +59,7 @@ def netjoin_cb(word, word_eol, userdata):
 	# Not found, connect to network automatically.
 	hexchat.command('url irc://"{}"/{}'.format(joinnet, joinchan))
 	return hexchat.EAT_ALL
-	
+
 def bookmark_cb(word, word_eol, userdata):
 	chan = None
 	net = None
@@ -84,3 +85,4 @@ hexchat.hook_command("netjoin", netjoin_cb, help='netjoin <channel> <network>')
 hexchat.hook_unload(unload_callback)
 load_bookmarks()
 print(__module_name__ + ' version ' + __module_version__ + ' loaded.')
+
