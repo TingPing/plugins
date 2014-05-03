@@ -18,14 +18,14 @@ def privmsg_cb(word, word_eol, userdata, attrs):
 
 	if hexchat.nickcmp(sender, mynick) == 0 and hexchat.nickcmp(recipient, mynick) != 0:
 		hexchat.command('query -nofocus {}'.format(recipient))
-		hexchat.find_context(network, recipient).set()
+		ctx = hexchat.find_context(network, recipient)
 
 		if '\001ACTION' in msg:
 			for repl in ('\001ACTION', '\001'):
 				msg = msg.replace(repl, '')
-			hexchat.emit_print('Your Action', mynick, msg.strip(), time=attrs.time)
+			ctx.emit_print('Your Action', mynick, msg.strip(), time=attrs.time)
 		else:
-			hexchat.emit_print('Your Message', mynick, msg, time=attrs.time)
+			ctx.emit_print('Your Message', mynick, msg, time=attrs.time)
 
 		return hexchat.EAT_ALL
 
