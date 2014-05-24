@@ -38,12 +38,12 @@ def do_command(cmd):
 	return True
 		
 def get_mask(nick):
-	invalid_chars = ['*', '?', '!', '@', '$']
+	invalid_chars = ('*', '?', '!', '@', '$')
 	if any(char in nick for char in invalid_chars):
 		return nick # It's already a mask.
 
 	for user in hexchat.get_list('users'):
-		if user.nick == nick:
+		if hexchat.nickcmp(user.nick, nick) == 0:
 			if user.account:
 				return '$a:{}'.format(user.account)
 			elif user.host:
