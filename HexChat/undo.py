@@ -18,6 +18,10 @@ redobufs = {}
 if platform == 'win32':
 	ctrlmod = '4'
 	shiftctrlmod = '5'
+elif platform == 'darwin':
+	# No idea whats up with these values
+	ctrlmod = '268435472'
+	shiftctrlmod = '268435473'
 else:
 	ctrlmod = '20'
 	shiftctrlmod = '21'
