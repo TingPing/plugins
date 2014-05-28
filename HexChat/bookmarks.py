@@ -15,7 +15,7 @@ def get_networks(name):
 def load_bookmarks():
 	hexchat.command('menu -p-2 add "$TAB/Bookmark" "bookmark %s"')
 	hexchat.command('menu add "$CHAN/Bookmark Channel" "bookmark %s"')
-	hexchat.command('menu -p3 add "Bookmarks"')
+	hexchat.command('menu -p-3 add "Bookmarks"')
 	hexchat.command('menu add "Bookmarks/-"')
 	hexchat.command('menu add "Bookmarks/Add or Remove Current Channel" "bookmark"')
 	for pref in hexchat.list_pluginpref():
