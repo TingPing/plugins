@@ -11,7 +11,8 @@ edited = False
 
 def print_cb(word, word_eol, event, attr):
 	global edited
-	if edited or attr.time: # Ignore our own events or bouncer playback
+	# Ignore our own events, bouncer playback, empty messages
+	if edited or attr.time or not len(word) > 1:
 		return
 
 	if any(_word in word[1] for _word in hlwords):
