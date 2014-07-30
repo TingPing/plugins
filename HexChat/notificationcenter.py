@@ -23,7 +23,7 @@ def notify(title, message):
 	if hexchat.get_prefs('gui_focus_omitalerts') and hexchat.get_info('win_status') == 'active':
 		return
 	
-	Notifier.notify(message, title=title, sender='org.hexchat', sound='default')
+	Notifier.notify(hexchat.strip(message), title=hexchat.strip(title), sender='org.hexchat', sound='default')
 
 def hilight_cb(word, word_eol, userdata):
 	notify('Highlight by ' + word[0], word[1])
