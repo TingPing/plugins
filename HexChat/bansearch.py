@@ -96,7 +96,7 @@ def get_user_info(nick):
 			realname = user.realname
 			return (host, account, realname)
 
-	return (None, None, None)
+	return (nick + '!*@*', None, None)
 
 def search_list(list, usermask):
 	matchlist = []
