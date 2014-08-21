@@ -35,8 +35,7 @@ def privmsg_cb(word, word_eol, userdata):
 	if word[0][1:].split('!')[0] == 'jtv':
 		for chan in hexchat.get_list('channels'):
 			if chan.type == 1 and chan.id == hexchat.get_prefs('id'):
-				chan.context.set()
-		hexchat.emit_print('Server Text', word_eol[3][1:])
+				chan.context.emit_print('Server Text', word_eol[3][1:])
 		return hexchat.EAT_ALL
 
 # Eat any message starting with a '.', twitch eats all of them too.
