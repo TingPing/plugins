@@ -76,21 +76,29 @@ def update_addons():
 
 	print('Script: Addon cache updated.')
 
+def unload_cb(script_file):
+	hexchat.command('unload {}'.format(script_file))
+	return False
+
+def load_cb(script_file):
+	hexchat.command('load {}'.format(script_file))
+	return False
+
 def download(script, unload):
 	for site in addon_cache.keys():
 		if script in addon_cache[site]:
+			script_file = expand_script(script)
 			print('Script: Downloading {}...'.format(script))
 			try:
-				urllib_request.urlretrieve(build_url(site, type='raw', script=script), expand_script(script))
+				urllib_request.urlretrieve(build_url(site, type='raw', script=script), script_file)
 			except urllib_error.HTTPError as err:
 				print('Script: Error downloading {} ({})'.format(script, err))
 			else:
 				print('Script: Download complete, {}...'.format('reloading' if unload else 'loading'))
 				if unload: # Updated
 					# Threading causes odd timing issues, using timer fixes it.
-					hexchat.command('timer .1 unload {}'.format(expand_script(script)))
-				hexchat.command('timer .1 load {}'.format(expand_script(script)))
-			
+					hexchat.hook_timer(0, unload_cb, script_file)
+				hexchat.hook_timer(0, load_cb, script_file)			
 			return
 
 	print('Script: Could not find {}'.format(script))
