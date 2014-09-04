@@ -67,7 +67,7 @@ def update_addons():
 			response.close()
 			data = json.loads(text)
 			addon_cache[site] = [d['name'] for d in data if d['name'].split('.')[-1] in addon_types]
-		except urllib_error.HTTPError:
+		except urllib_error.HTTPError as err:
 			if err.code == 403:
 				print("Script: You have hit Github's rate-limit")
 				return
