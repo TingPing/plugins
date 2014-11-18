@@ -1,12 +1,16 @@
+import re
 import hexchat
 
 __module_name__ = 'wordhl'
 __module_author__ = 'TingPing'
-__module_version__ = '1'
+__module_version__ = '2'
 __module_description__ = 'Highlights some words of importance'
 # When you want to notice something, but not really get 'highlighted'
 
+# Case insensitive words
 hlwords = ('hexchat', )
+
+# Don't touch
 edited = False
 
 def print_cb(word, word_eol, event, attr):
@@ -15,13 +19,15 @@ def print_cb(word, word_eol, event, attr):
 	if edited or attr.time or not len(word) > 1:
 		return
 
-	if any(_word in word[1] for _word in hlwords):
-		msg = word[1]
-		for _word in hlwords:
-			msg = msg.replace(_word, '\00320' + _word + '\00399').strip() # Color red
+	msg = word[1]
+	for _word in hlwords:
+		# Color red
+		msg = re.sub(_word, '\00320' + _word + '\00399', msg, flags=re.I)
 
+	if msg != word[1]: # Something replaced
 		edited = True
-		hexchat.emit_print(event, word[0], msg)
+		word = [(word[i] if len(word) > i else '') for i in range(4)]
+		hexchat.emit_print(event, word[0], msg, word[2], word[3])
 		edited = False
 
 		hexchat.command('gui color 3')
