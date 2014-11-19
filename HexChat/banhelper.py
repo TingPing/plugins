@@ -10,7 +10,8 @@ wasop = False
 def is_op():
 	for user in hexchat.get_list('users'):
 		if user.nick == hexchat.get_info('nick'):
-			if user.prefix == '@':
+			# FIXME: This might not work on all networks with 50 op levels..
+			if '@' in user.prefix:
 				return True
 			else:
 				return False
