@@ -8,8 +8,9 @@ __module_description__ = "Simplifies banning and quieting"
 wasop = False
 
 def is_op():
+	my_nick = hexchat.get_info('nick')
 	for user in hexchat.get_list('users'):
-		if user.nick == hexchat.get_info('nick'):
+		if user.nick == my_nick:
 			# FIXME: This might not work on all networks with 50 op levels..
 			if '@' in user.prefix:
 				return True
