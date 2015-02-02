@@ -14,24 +14,22 @@ redolevels = 10
 undobufs = {}
 redobufs = {}
 
-# Windows and Linux return different modifiers
-if platform == 'win32':
-	ctrlmod = '4'
-	shiftctrlmod = '5'
-elif platform == 'darwin':
-	# No idea whats up with these values
-	ctrlmod = '268435472'
-	shiftctrlmod = '268435473'
+if platform == 'darwin':
+	primarymod = 1 << 28
 else:
-	ctrlmod = '20'
-	shiftctrlmod = '21'
+	primarymod = 1 << 2
+shiftmod = 1 << 0
+
+def get_valid_mod (mod):
+	"""Modifiers are full of junk we dont care about, remove them"""
+	return int(mod) & (1 << 0 | 1 << 2 | 1 << 3 | 1 << 28)
 
 def keypress_cb(word, word_eol, userdata):
 	global undobufs
 	global redobufs
 	bufname = '{}_{}'.format(hexchat.get_info('channel'), hexchat.get_info('network'))
 	key = word[0]
-	mod = word[1]
+	mod = get_valid_mod(word[1])
 	inputtext = hexchat.get_info('inputbox')
 
 	# Previous strings are stored as deque's in a dict for each channel
@@ -45,8 +43,7 @@ def keypress_cb(word, word_eol, userdata):
 	else:
 		redobuflist = redobufs[bufname]
 
-
-	if (key, mod) == ('122', ctrlmod): # ctrl+z
+	if (key, mod) == ('122', primarymod): # ctrl+z
 		try:
 			# Get last saved string
 			text = undobuflist.pop()
@@ -60,8 +57,8 @@ def keypress_cb(word, word_eol, userdata):
 
 		except IndexError: pass # No undos left
 
-	elif ((key, mod) == ('121', ctrlmod) or # ctrl+y
-			(key, mod) == ('90', shiftctrlmod)): # ctrl+shift+z 
+	elif ((key, mod) == ('121', primarymod) or # ctrl+y
+			(key, mod) == ('90', shiftmod|primarymod)): # ctrl+shift+z 
 		try:
 			text = redobuflist.pop()
 			if text == inputtext:
