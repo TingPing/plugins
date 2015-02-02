@@ -7,14 +7,19 @@ __module_version__ = "0.1"
 __module_description__ = "Adds keybinding to undo close tab"
 __module_author__ = "TingPing"
 
-if platform == 'win32':
-	shiftctrlmod = '5'
-elif platform == 'darwin':
-	shiftctrlmod = '268435473'
+if platform == 'darwin':
+	primarymod = 1 << 28
 else:
-	shiftctrlmod = '21'
+	primarymod = 1 << 2
+shiftmod = 1 << 0
+
+shiftctrlmod = primarymod|shiftmod
 
 close_history = deque(maxlen=30)
+
+def get_valid_mod(mod):
+	"""Modifiers are full of junk we dont care about, remove them"""
+	return int(mod) & (1 << 0 | 1 << 2 | 1 << 3 | 1 << 28)
 
 def contextclosed_cb(word, word_eol, userdata):
 	global close_history
@@ -40,7 +45,7 @@ def contextclosed_cb(word, word_eol, userdata):
 def keypress_cb(word, word_eol, userdata):
 	global close_history
 
-	key, mod = word[0], word[1]
+	key, mod = word[0], get_valid_mod(word[1])
 	
 	if (key, mod) == ('84', shiftctrlmod): # Ctrl+Shift+t
 		try:
