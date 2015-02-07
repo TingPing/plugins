@@ -12,7 +12,7 @@ def is_op():
 	for user in hexchat.get_list('users'):
 		if user.nick == my_nick:
 			# FIXME: This might not work on all networks with 50 op levels..
-			if '@' in user.prefix:
+			if '@' in user.prefix or '&' in user.prefix:
 				return True
 			else:
 				return False
