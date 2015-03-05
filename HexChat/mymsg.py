@@ -28,5 +28,10 @@ def privmsg_cb(word, word_eol, userdata, attrs):
 			ctx.emit_print('Your Message', mynick, msg, time=attrs.time)
 
 		return hexchat.EAT_ALL
+		
+def caps_cb(word, word_eol, userdata):
+        if "znc.in/self-message" in word[1]:
+                hexchat.command("cap req znc.in/self-message")
 
 hexchat.hook_server_attrs('PRIVMSG', privmsg_cb)
+hexchat.hook_print('Capability List', caps_cb)
