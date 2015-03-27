@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = 'Twitch'
 __module_author__ = 'TingPing'
-__module_version__ = '4'
+__module_version__ = '3'
 __module_description__ = 'Better integration with Twitch.tv'
 # Very much a work in progress...
 
@@ -17,9 +17,9 @@ aliases = {'op':'mod', 'deop':'unmod'}
 
 def twitchOnly(func):
 	def if_twitch(*args, **kwargs):
-		server = hexchat.get_info('host')
-		if server and ('twitch.tv' in server or 'justin.tv' in server):
-			return func(*args, **kwargs)
+		for host in (hexchat.get_info('host'), hexchat.get_info('server')):
+			if host and 'twitch.tv' in host:
+				return func(*args, **kwargs)
 		else:
 			return hexchat.EAT_NONE
 	return if_twitch
@@ -30,8 +30,8 @@ def servererr_cb(word, word_eol, userdata):
 	if word[3] in ('WHO', 'WHOIS'):
 		return hexchat.EAT_ALL
 
-@twitchOnly
-def endofmotd_cb(word, word_eol, userdata):
+#@twitchOnly
+#def endofmotd_cb(word, word_eol, userdata):
 	# TODO: This shows the output of commands like /slow but also
 	# tons of other garbage we have to ignore..
 	# hexchat.command('QUOTE TWITCHCLIENT 3')
