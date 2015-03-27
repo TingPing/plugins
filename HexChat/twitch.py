@@ -2,7 +2,7 @@ import hexchat
 
 __module_name__ = 'Twitch'
 __module_author__ = 'TingPing'
-__module_version__ = '3'
+__module_version__ = '4'
 __module_description__ = 'Better integration with Twitch.tv'
 # Very much a work in progress...
 
