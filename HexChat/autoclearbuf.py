@@ -13,7 +13,7 @@ recently_cleared = []
 
 def privmsg_cb(word, word_eol, userdata):
 	# ZNC helpfully tells us what we just did.. so lets hide that spam
-	if word[0] == ':*status!znc@znc.in' and word_eol[4].startswith('buffers matching'):
+	if word[0] == ':*status!znc@znc.in' and len(word_eol) > 4 and word_eol[4].startswith('buffers matching'):
 		cleared = word[6][1:-1] # [nick]
 		if cleared in recently_cleared:
 			recently_cleared.remove(cleared)
