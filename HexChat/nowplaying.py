@@ -23,9 +23,9 @@ def print_nowplaying(mp, echo=False):
 	metadata = mp.player.Metadata
 
 	try:
-		title = metadata['xesam:title']
-		artist = metadata['xesam:artist'][0]
-		album = metadata['xesam:album']
+		title = metadata['xesam:title'].encode('utf-8')
+		artist = metadata['xesam:artist'][0].encode('utf-8')
+		album = metadata['xesam:album'].encode('utf-8')
 	except KeyError:
 		print('NP: Song info not found.')
 		return
