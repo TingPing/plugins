@@ -3,7 +3,7 @@ import hexchat
 
 __module_name__ = "PythonTabComplete"
 __module_author__ = "TingPing, FichteFoll"
-__module_version__ = "0.2"
+__module_version__ = "0.3"
 __module_description__ = "Tab-completes module attributes in Interactive Console"
 
 last_index = None
@@ -24,6 +24,7 @@ def keypress_cb(word, word_eol, userdata):
 		return
 	if not hexchat.get_info('channel') == '>>python<<':
 		return
+	shift_key_is_down = bool(int(word[1]) & 1)  # check if shift modifier is hold
 
 	text = hexchat.get_info('inputbox')
 	pos = hexchat.get_prefs('state_cursor')
@@ -50,7 +51,8 @@ def keypress_cb(word, word_eol, userdata):
 	else:
 		# same context, insert next completion
 		completions = last_completes
-		index = (last_index + 1) % len(completions)
+		direction = 1 if not shift_key_is_down else -1
+		index = (last_index + direction) % len(completions)
 
 	complete_text = completions[index]
 
