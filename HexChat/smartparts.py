@@ -41,6 +41,14 @@ def mode_cb(word, word_eol, userdata):
 
 	return check_lasttalk(word[1])
 
+def raw_mode_cb(word, word_eol, userdata):
+	if check_you(word[0]) or check_notify(word[0]):
+		return hexchat.EAT_NONE
+
+	# TODO: Parse targets and check them
+
+	return check_lasttalk(word[0])
+
 def join_cb(word, word_eol, userdata):
 	if check_notify(word[0]):
 		return hexchat.EAT_NONE
@@ -57,5 +65,6 @@ for event in ('Quit', 'Part', 'Part with Reason'):
 	hexchat.hook_print(event, part_cb)
 for event in ('Channel Operator', 'Channel Voice'):
 	hexchat.hook_print(event, mode_cb)
+hexchat.hook_print('Raw Modes', raw_mode_cb)
 hexchat.hook_print('Join', join_cb)
 hexchat.hook_print('Change Nick', nick_cb)
