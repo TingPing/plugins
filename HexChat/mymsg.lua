@@ -25,8 +25,8 @@ hexchat.hook_server_attrs('PRIVMSG', function (word, word_eol, attrs)
 		hexchat.command('query -nofocus ' .. recipient)
 		local ctx = hexchat.find_context(network, recipient)
 
-		if message:sub(1, 7) == '\001ACTION' then
-			local action = message:sub(8, #message-1)
+		if message:sub(1, 8) == '\001ACTION ' then
+			local action = message:sub(9, #message-1)
 			ctx:emit_print_attrs(attrs, 'Your Action', mynick, action)
 		else
 			ctx:emit_print_attrs(attrs, 'Your Message', mynick, message)
