@@ -39,8 +39,12 @@ end
 local function get_valid_mod (modifier)
 	-- We only care about a few modifiers
 	local mods = 0
-	for _, mod in ipairs({0, 2, 3, 28}) do
-		mods = bit.bor(mods, bit.lshift(1, mod))
+	for _, mod in pairs({
+		Gdk.ModifierType.CONTROL_MASK,
+		Gdk.ModifierType.SHIFT_MASK,
+		Gdk.ModifierType.MOD1_MASK, -- alt
+	}) do
+		mods = bit.bor(mods, mod)
 	end
 
 	return bit.band(tonumber(modifier), mods)
@@ -70,7 +74,8 @@ hexchat.hook_print('Key Press', function (args)
 			hexchat.command('setcursor ' .. tostring(#text))
 			redostack:push(text)
 		end
-	elseif (key == Gdk.KEY_y or key == Gdk.KEY_Z) and mod == Gdk.ModifierType.CONTROL_MASK then
+	elseif (key == Gdk.KEY_y and mod == Gdk.ModifierType.CONTROL_MASK) or
+	       (key == Gdk.KEY_Z and mod == bit.bor(Gdk.ModifierType.CONTROL_MASK, Gdk.ModifierType.SHIFT_MASK))  then
 		local text = redostack:pop()
 		if text then
 			if text == input then
