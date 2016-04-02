@@ -57,7 +57,6 @@ hexchat.hook_print('Key Press', function (args)
 	if #undostack == 0 and #redostack == 0 then
 		undobufs[bufname] = undostack
 		redobufs[bufname] = redostack
-		print('made new?')
 	end
 
 	if key == Gdk.KEY_z and mod == Gdk.ModifierType.CONTROL_MASK then
