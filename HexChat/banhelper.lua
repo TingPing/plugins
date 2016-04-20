@@ -19,11 +19,10 @@ local function get_mask (nick)
 
 	for user in hexchat.iterate('users') do
 		if hexchat.nickcmp(user.nick, nick) == 0 then
-			print(tostring(user.account))
 			if user.account then
 				return '$a:' .. user.account
 			elseif user.host then
-				return '*!*@' .. user.host:match('^([^@]+)')
+				return '*!*@' .. user.host:match('@(.+)$')
 			else
 				print('BanHelper: Warning, user info not found, try enabling irc_who_join')
 				return nil
