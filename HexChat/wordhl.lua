@@ -48,6 +48,6 @@ end
 
 for _, event in ipairs({'Channel Action', 'Channel Message'}) do
 	hexchat.hook_print(event, function (args)
-		on_message (args, event)
+		return on_message (args, event)
 	end, hexchat.PRI_HIGH)
 end
