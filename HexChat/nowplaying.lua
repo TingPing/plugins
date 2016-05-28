@@ -56,10 +56,14 @@ local function print_nowplaying (player)
 	end
 
 	local metadata = ret[1].value -- a{sv}
-	local title = metadata['xesam:title']
-	local artist = metadata['xesam:artist'][1]
-	local album = metadata['xesam:album']
-	-- TODO: Handle any of these missing
+	local title = metadata['xesam:title'] or 'Unknown Title'
+	local album = metadata['xesam:album'] or 'Unknown Album'
+	local artist
+	if metadata['xesam:artist'] then
+		artist = metadata['xesam:artist'][1]
+	else
+		artist = 'Unknown Artist'
+	end
 
 	-- TODO: Support customizing the command
 	hexchat.command(string.format('me is now playing %s by %s on %s.', title, artist, album))
