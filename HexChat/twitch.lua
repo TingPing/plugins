@@ -72,3 +72,13 @@ hexchat.hook_print('Your Message', function (args)
 		return hexchat.EAT_ALL
 	end
 end)
+
+hexchat.hook_print('Channel Message', function (args)
+	if not is_twitch() then return end
+
+	-- Format messages from twitchnotify
+	if args[1] == 'twitchnotify' then
+		print('\00314*\t' .. args[2])
+		return hexchat.EAT_HEXCHAT
+	end
+end, hexchat.PRI_LOW)
