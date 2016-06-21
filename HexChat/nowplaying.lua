@@ -25,6 +25,7 @@ hexchat.register('NowPlaying', '4', 'Announce songs from MPRIS2 clients')
         $albumArtist - same as $artist for 'xesam:albuArtist'
         $position    - the current playback position as a formatted timestamp
         $length      - ${mpris:length} as a formatted timestamp
+        $player      - name of the player
 ]]
 local COMMAND_TEMPLATE = ([[
     me is now playing
@@ -173,6 +174,8 @@ local function print_nowplaying (player)
             -- shorthands
             replacements['title'] = metadata['xesam:title']
             replacements['album'] = metadata['xesam:album']
+            -- other
+            replacements['player'] = player
 
             hexchat.command(template_string(COMMAND_TEMPLATE, replacements))
         end)
