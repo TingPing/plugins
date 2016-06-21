@@ -2,7 +2,7 @@ local lgi = require('lgi')
 local GLib = lgi.require('GLib')
 local Gio = lgi.require('Gio')
 
-hexchat.register('NowPlaying', '2', 'Announce songs from MPRIS2 clients')
+hexchat.register('NowPlaying', '3', 'Announce songs from MPRIS2 clients')
 
 local bus
 local cancellable = Gio.Cancellable()
@@ -54,44 +54,79 @@ local function get_players (callback)
 		end)
 end
 
+local function get_property (player, prop_path, callback)
+    bus:call('org.mpris.MediaPlayer2.' .. player, -- bus
+        '/org/mpris/MediaPlayer2', -- path
+        'org.freedesktop.DBus.Properties', -- interface
+        'Get', -- method
+        GLib.Variant('(ss)', prop_path), -- params
+        GLib.VariantType('(v)'), -- return type
+        Gio.DBusCallFlags.NONE, -1,
+        cancellable,
+        function (connection, result)
+            local ret, err = connection:call_finish(result)
+
+            if err then
+                print('NP: Error ' .. tostring(err))
+                return
+            elseif #ret ~= 1 then
+                return
+            end
+
+            callback(ret[1].value)
+        end)
+end
+
+local function format_timestamp (microsecs)
+    if microsecs == nil then
+        return
+    end
+    local secs = microsecs / 1000000
+    local mins = secs / 60
+    local hours = math.floor(mins / 60)
+    local str = string.format("%d:%02d", mins % 60, secs % 60)
+    if hours > 0 then
+        str = string.format("%d:%02d:%02d", hours, mins % 60, secs % 60)
+    end
+    return str
+end
+
+local function get_metadata(player, callback)
+    get_property(player, {'org.mpris.MediaPlayer2.Player', 'Metadata'}, callback) -- a{sv}
+end
+
+local function get_position(player, callback)
+    get_property(player, {'org.mpris.MediaPlayer2.Player', 'Position'}, callback) -- x
+end
+
 local function print_nowplaying (player)
 	local original_context = hexchat.props.context
 
-	bus:call('org.mpris.MediaPlayer2.' .. player,
-		'/org/mpris/MediaPlayer2',
-		'org.freedesktop.DBus.Properties',
-		'Get',
-		GLib.Variant('(ss)', {'org.mpris.MediaPlayer2.Player', 'Metadata'}),
-		GLib.VariantType('(v)'),
-		Gio.DBusCallFlags.NONE, -1,
-		cancellable,
-		function (connection, result)
-			local ret, err = connection:call_finish(result)
+    get_position(player,
+        function (position) -- x
+            get_metadata(player,
+                function (metadata) -- a{sv}
+                    local title = metadata['xesam:title'] or 'Unknown Title'
+                    local album = metadata['xesam:album'] or 'Unknown Album'
+                    local length = metadata['mpris:length']
+                    local artist
+                    if metadata['xesam:artist'] then
+                        artist = metadata['xesam:artist'][1]
+                    else
+                        artist = 'Unknown Artist'
+                    end
 
-			if err then
-				-- print('NP: Error ' .. tostring(err))
-				return
-			elseif #ret ~= 1 then
-				return
-			end
+                    if not original_context:set() then
+                        return
+                    end
 
-			local metadata = ret[1].value -- a{sv}
-			local title = metadata['xesam:title'] or 'Unknown Title'
-			local album = metadata['xesam:album'] or 'Unknown Album'
-			local artist
-			if metadata['xesam:artist'] then
-				artist = metadata['xesam:artist'][1]
-			else
-				artist = 'Unknown Artist'
-			end
+                    local position_s, length_s = format_timestamp(position), format_timestamp(length)
 
-			if not original_context:set() then
-				return
-			end
-
-			-- TODO: Support customizing the command
-			hexchat.command(string.format('me is now playing %s by %s on %s.', title, artist, album))
-		end)
+                    -- TODO: Support customizing the command
+                    hexchat.command(string.format("me is now playing \002%s\002 by \002%s\002 [%s/%s]",
+                                                  title, artist, position_s, length_s))
+                end)
+        end)
 end
 
 hexchat.hook_command('np', function (word, word_eol)
