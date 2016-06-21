@@ -102,31 +102,29 @@ end
 local function print_nowplaying (player)
 	local original_context = hexchat.props.context
 
-    get_position(player,
-        function (position) -- x
-            get_metadata(player,
-                function (metadata) -- a{sv}
-                    local title = metadata['xesam:title'] or 'Unknown Title'
-                    local album = metadata['xesam:album'] or 'Unknown Album'
-                    local length = metadata['mpris:length']
-                    local artist
-                    if metadata['xesam:artist'] then
-                        artist = metadata['xesam:artist'][1]
-                    else
-                        artist = 'Unknown Artist'
-                    end
+    get_position(player, function (position) -- x
+        get_metadata(player, function (metadata) -- a{sv}
+            if not original_context:set() then -- check if context still exists
+                return
+            end
 
-                    if not original_context:set() then
-                        return
-                    end
+            local title = metadata['xesam:title'] or 'Unknown Title'
+            local album = metadata['xesam:album'] or 'Unknown Album'
+            local length = metadata['mpris:length']
+            local artist
+            if metadata['xesam:artist'] then
+                artist = metadata['xesam:artist'][1]
+            else
+                artist = 'Unknown Artist'
+            end
 
-                    local position_s, length_s = format_timestamp(position), format_timestamp(length)
+            local position_s, length_s = format_timestamp(position), format_timestamp(length)
 
-                    -- TODO: Support customizing the command
-                    hexchat.command(string.format("me is now playing \002%s\002 by \002%s\002 [%s/%s]",
-                                                  title, artist, position_s, length_s))
-                end)
+            -- TODO: Support customizing the command
+            hexchat.command(string.format("me is now playing \002%s\002 by \002%s\002 [%s/%s]",
+                                          title, artist, position_s, length_s))
         end)
+    end)
 end
 
 hexchat.hook_command('np', function (word, word_eol)
