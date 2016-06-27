@@ -81,8 +81,8 @@ local function format_timestamp (microsecs)
     if microsecs == nil then
         return
     end
-    local secs = microsecs / 1000000
-    local mins = secs / 60
+    local secs = math.floor(microsecs / 1000000)
+    local mins = math.floor(secs / 60)
     local hours = math.floor(mins / 60)
     local str = string.format("%d:%02d", mins % 60, secs % 60)
     if hours > 0 then
