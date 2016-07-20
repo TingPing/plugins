@@ -163,9 +163,9 @@ local function print_nowplaying (player)
                     replacements[key] = ""
                     for i, item in ipairs(source) do
                         if i ~= 1 then
-                            replacements[key] ..= " & "
+                            replacements[key] = replacements[key] .. " & "
                         end
-                        replacements[key] ..= item
+                        replacements[key] = replacements[key] .. item
                     end
                 end
             end
