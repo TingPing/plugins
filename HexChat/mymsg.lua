@@ -4,7 +4,7 @@ hexchat.hook_print('Capability List', function (args)
 	if args[2]:find('znc.in/self%-message') then
 		hexchat.command('CAP REQ znc.in/self-message')
 
-		ctx = hexchat.props.context
+		local ctx = hexchat.props.context
 		hexchat.hook_timer(1, function ()
 			-- Emit right after this event
 			if ctx:set() then
