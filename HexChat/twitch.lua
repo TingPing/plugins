@@ -1,9 +1,10 @@
 hexchat.register('Twitch', '1', 'Better integration with twitch.tv')
 
 local function is_twitch ()
+	local server = hexchat.get_info('server')
 	if hexchat.nickcmp(hexchat.get_info('network'), 'Twitch') == 0 then
 		return true
-	elseif hexchat.get_info('server'):find('twitch.tv$') then
+	elseif server and server:find('twitch.tv$') then
 		return true
 	else
 		return false
