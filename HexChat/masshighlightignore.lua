@@ -3,19 +3,16 @@ hexchat.register('MassHighlightIgnore', '2', 'Ignore mass highlight spam')
 local MAX_COUNT = 4
 
 -- http://lua-users.org/wiki/SplitJoin
-local function split (str)
+local function split(str)
 	local t = {}
-	local function helper(word)
-		table.insert(t, word)
-		return ''
+	for i in string.gmatch(str, "%S+") do
+		t[#t + 1] = i
 	end
-	if not str:gsub('%w+', helper):find('%S') then
-		return t
-	end
+	return t
 end
 
 local function nick_in_list (nick, list)
-	for word, _ in pairs(list) do
+	for _, word in pairs(list) do
 		if hexchat.nickcmp(word, nick) == 0 then
 			return true
 		end
