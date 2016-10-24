@@ -51,7 +51,11 @@ local function get_valid_mod (modifier)
 end
 
 hexchat.hook_print('Key Press', function (args)
-	local bufname = hexchat.get_info('channel') .. '_' .. hexchat.get_info('network')
+	local network = hexchat.get_info('network')
+	if network == nil then
+		network = '<none>'
+	end
+	local bufname = hexchat.get_info('channel') .. '_' .. network
 	local key = tonumber(args[1])
 	local mod = get_valid_mod(args[2])
 	local input = hexchat.get_info('inputbox')
