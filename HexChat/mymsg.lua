@@ -27,7 +27,7 @@ end)
 local function prefix_is_channel (prefix)
 	local chantypes = hexchat.props['chantypes']
 	for i = 1, #chantypes do
-		if chantypes[i] == prefix then
+		if chantypes:sub(i, i) == prefix then
 			return true
 		end
 	end
