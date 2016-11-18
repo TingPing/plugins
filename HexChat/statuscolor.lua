@@ -20,6 +20,13 @@ local function on_message (args, attrs, event)
 		return hexchat.EAT_NONE
 	end
 
+	-- In > 2.12.3 we need to be explicit about color changes
+	if event:sub(-7, -1) == 'Hilight' then
+		hexchat.command('gui color 3')
+	elseif event:sub(1, 4) ~= 'Your' then
+		hexchat.command('gui color 2')
+	end
+
 	edited = true
 	args[1] = '\003' .. color .. hexchat.strip(args[1]) .. '\00399'
 	args[3] = '\003' .. color .. args[3] .. '\00399'
