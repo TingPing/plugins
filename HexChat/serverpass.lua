@@ -1,4 +1,4 @@
-hexchat.register('ServerPass', '1', 'Alows using server password with another login method')
+hexchat.register('ServerPass', '1', 'Allows using server password with another login method')
 
 -- Configure networks here:
 --   The key must match a network name in your network list
