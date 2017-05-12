@@ -70,6 +70,6 @@ end)
 hexchat.hook_server_attrs('PRIVMSG', function (word, word_eol, attrs)
 	local id = hexchat.prefs['id']
 	if servers[id] then
-		servers[id] = GLib.get_real_time() / 1000 -- epoch in miliseconds UTC
+		servers[id] = GLib.get_real_time() / 1000000 -- epoch in seconds with milisecond precision UTC
 	end
 end, hexchat.PRI_LOWEST)
