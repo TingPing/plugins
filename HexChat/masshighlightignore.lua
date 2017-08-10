@@ -2,6 +2,8 @@ hexchat.register('MassHighlightIgnore', '2', 'Ignore mass highlight spam')
 
 local MAX_COUNT = 4
 
+unpack = table.unpack -- fix lua 5.2
+
 -- http://lua-users.org/wiki/SplitJoin
 local function split(str)
 	local t = {}
