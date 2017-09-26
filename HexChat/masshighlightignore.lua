@@ -1,4 +1,8 @@
-hexchat.register('MassHighlightIgnore', '2', 'Ignore mass highlight spam')
+hexchat.register('MassHighlightIgnore', '3', 'Ignore mass highlight spam')
+
+if unpack == nil then
+	unpack = table.unpack -- fix lua 5.2
+end
 
 local MAX_COUNT = 4
 
