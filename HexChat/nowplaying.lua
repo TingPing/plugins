@@ -88,6 +88,7 @@ local function get_players (callback)
 end
 
 local function get_property (player, prop_path, callback)
+	-- https://specifications.freedesktop.org/mpris-spec/latest/
     bus:call('org.mpris.MediaPlayer2.' .. player, -- bus
         '/org/mpris/MediaPlayer2', -- path
         'org.freedesktop.DBus.Properties', -- interface
@@ -153,6 +154,7 @@ local function print_nowplaying (player)
     get_position(player, function (position) -- x
         get_metadata(player, function (metadata) -- a{sv}
             if not original_context:set() then -- check if context still exists
+                print("NP: original context has been closed")
                 return
             end
             local replacements = metadata -- there's no built-in function to make a shallow copy
