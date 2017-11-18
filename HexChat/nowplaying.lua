@@ -6,7 +6,6 @@ hexchat.register('NowPlaying', '4', 'Announce songs from MPRIS2 clients')
 
 --[[
 	Modify this template string for a different command.
-	Multiple whitespace characters are reduced to a single space.
 
 	Syntax:
 		$field           - replaced with the value of field;
