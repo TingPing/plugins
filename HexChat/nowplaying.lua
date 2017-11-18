@@ -28,13 +28,13 @@ hexchat.register('NowPlaying', '4', 'Announce songs from MPRIS2 clients')
         $length      - ${mpris:length} as a formatted timestamp
         $player      - name of the player
 ]]
-local COMMAND_TEMPLATE = ([[
-    me is now playing
-    \002${title=Unknown Title}\002
-    by
-    \002${artist=Unknown Artist}\002
-    [$position/$length]
-]]):gsub("%s", " ")
+local COMMAND_TEMPLATE = (
+	   "me is now playing"
+	.. " \002${title=Unknown Title}\002"
+	.. " by"
+	.. " \002${artist=Unknown Artist}\002"
+	.. " [$position/$length]"
+)
 
 
 local bus
