@@ -5,28 +5,28 @@ local Gio = lgi.require('Gio')
 hexchat.register('NowPlaying', '4', 'Announce songs from MPRIS2 clients')
 
 --[[
-    Modify this template string for a different command.
-    Multiple whitespace characters are reduced to a single space.
+	Modify this template string for a different command.
+	Multiple whitespace characters are reduced to a single space.
 
-    Syntax:
-        $field           - replaced with the value of field;
-                           only alphanumeric characters are recognized
-        ${field}         - replaced with the value of field;
-                           recognizes all characters but `=` (denotes default value) and `}`
-                           (closes template replacement)
-        ${field=default} - replaced with the value of field or "default" if it is nil
-        $$               - a literal dollar sign
+	Syntax:
+		$field           - replaced with the value of field;
+		                   only alphanumeric characters are recognized
+		${field}         - replaced with the value of field;
+		                   recognizes all characters but `=` (denotes default value) and `}`
+		                   (closes template replacement)
+		${field=default} - replaced with the value of field or "default" if it is nil
+		$$               - a literal dollar sign
 
-    Available Fields:
-        ${xesam:*}, ${mpris:*}
-            - As specified in https://www.freedesktop.org/wiki/Specifications/mpris-spec/metadata
-        $title       - short for ${xesam:title}
-        $album       - short for ${xesam:album}
-        $artist      - aggregated string from the 'xesam:artist' list provided by metadata
-        $albumArtist - same as $artist for 'xesam:albuArtist'
-        $position    - the current playback position as a formatted timestamp
-        $length      - ${mpris:length} as a formatted timestamp
-        $player      - name of the player
+	Available Fields:
+		${xesam:*}, ${mpris:*}
+			- As specified in https://www.freedesktop.org/wiki/Specifications/mpris-spec/metadata
+		$title       - short for ${xesam:title}
+		$album       - short for ${xesam:album}
+		$artist      - aggregated string from the 'xesam:artist' list provided by metadata
+		$albumArtist - same as $artist for 'xesam:albuArtist'
+		$position    - the current playback position as a formatted timestamp
+		$length      - ${mpris:length} as a formatted timestamp
+		$player      - name of the player
 ]]
 local COMMAND_TEMPLATE = (
 	   "me is now playing"
@@ -89,101 +89,101 @@ end
 
 local function get_property (player, prop_path, callback)
 	-- https://specifications.freedesktop.org/mpris-spec/latest/
-    bus:call('org.mpris.MediaPlayer2.' .. player, -- bus
-        '/org/mpris/MediaPlayer2', -- path
-        'org.freedesktop.DBus.Properties', -- interface
-        'Get', -- method
-        GLib.Variant('(ss)', prop_path), -- params
-        GLib.VariantType('(v)'), -- return type
-        Gio.DBusCallFlags.NONE, -1,
-        cancellable,
-        function (connection, result)
-            local ret, err = connection:call_finish(result)
+	bus:call('org.mpris.MediaPlayer2.' .. player, -- bus
+		'/org/mpris/MediaPlayer2', -- path
+		'org.freedesktop.DBus.Properties', -- interface
+		'Get', -- method
+		GLib.Variant('(ss)', prop_path), -- params
+		GLib.VariantType('(v)'), -- return type
+		Gio.DBusCallFlags.NONE, -1,
+		cancellable,
+		function (connection, result)
+			local ret, err = connection:call_finish(result)
 
-            if err then
-                print('NP: Error ' .. tostring(err))
-                return
-            elseif #ret ~= 1 then
-                return
-            end
+			if err then
+				print('NP: Error ' .. tostring(err))
+				return
+			elseif #ret ~= 1 then
+				return
+			end
 
-            callback(ret[1].value)
-        end)
+			callback(ret[1].value)
+		end)
 end
 
 local function get_metadata(player, callback)
-    get_property(player, {'org.mpris.MediaPlayer2.Player', 'Metadata'}, callback) -- a{sv}
+	get_property(player, {'org.mpris.MediaPlayer2.Player', 'Metadata'}, callback) -- a{sv}
 end
 
 local function get_position(player, callback)
-    get_property(player, {'org.mpris.MediaPlayer2.Player', 'Position'}, callback) -- x
+	get_property(player, {'org.mpris.MediaPlayer2.Player', 'Position'}, callback) -- x
 end
 
 local function format_timestamp (microsecs)
-    if microsecs == nil then
-        return
-    end
-    local secs = math.floor(microsecs / 1000000)
-    local mins = math.floor(secs / 60)
-    local hours = math.floor(mins / 60)
-    local str = string.format("%d:%02d", mins % 60, secs % 60)
-    if hours > 0 then
-        str = string.format("%d:%02d:%02d", hours, mins % 60, secs % 60)
-    end
-    return str
+	if microsecs == nil then
+		return
+	end
+	local secs = math.floor(microsecs / 1000000)
+	local mins = math.floor(secs / 60)
+	local hours = math.floor(mins / 60)
+	local str = string.format("%d:%02d", mins % 60, secs % 60)
+	if hours > 0 then
+		str = string.format("%d:%02d:%02d", hours, mins % 60, secs % 60)
+	end
+	return str
 end
 
 local function template_string (template, replacements)
-    template = template:gsub("%$%$", "\000") -- $$ -> \000
-    template = template:gsub("%$([%w_]+)", replacements) -- $field
-    template = template:gsub("%${([^}]+)}", function (field) -- ${field}; ${field=default}
-        field, default = field:match('(.+)=(.*)') or field
-        repl = replacements[field]
-        if repl == nil and repl ~= nil then
-            repl = default or ""
-        end
-        return repl
-    end)
-    template = template:gsub("\000", "$") -- \000 -> $
+	template = template:gsub("%$%$", "\000") -- $$ -> \000
+	template = template:gsub("%$([%w_]+)", replacements) -- $field
+	template = template:gsub("%${([^}]+)}", function (field) -- ${field}; ${field=default}
+		field, default = field:match('(.+)=(.*)') or field
+		repl = replacements[field]
+		if repl == nil and repl ~= nil then
+			repl = default or ""
+		end
+		return repl
+	end)
+	template = template:gsub("\000", "$") -- \000 -> $
 	return template
 end
 
 local function print_nowplaying (player)
 	local original_context = hexchat.props.context
 
-    get_position(player, function (position) -- x
-        get_metadata(player, function (metadata) -- a{sv}
-            if not original_context:set() then -- check if context still exists
-                print("NP: original context has been closed")
-                return
-            end
-            local replacements = metadata -- there's no built-in function to make a shallow copy
+	get_position(player, function (position) -- x
+		get_metadata(player, function (metadata) -- a{sv}
+			if not original_context:set() then -- check if context still exists
+				print("NP: original context has been closed")
+				return
+			end
+			local replacements = metadata -- there's no built-in function to make a shallow copy
 
-            -- aggregate artist and albumArtist fields
-            for _, key in pairs({'artist', 'albumArtist'}) do
-                local source = metadata['xesam:' .. key]
-                if source then
-                    replacements[key] = ""
-                    for i, item in ipairs(source) do
-                        if i ~= 1 then
-                            replacements[key] = replacements[key] .. " & "
-                        end
-                        replacements[key] = replacements[key] .. item
-                    end
-                end
-            end
-            -- formatted timestamps
-            replacements['position'] = format_timestamp(position)
-            replacements['length'] = format_timestamp(metadata['mpris:length'])
-            -- shorthands
-            replacements['title'] = metadata['xesam:title']
-            replacements['album'] = metadata['xesam:album']
-            -- other
-            replacements['player'] = player
+			-- aggregate artist and albumArtist fields
+			for _, key in pairs({'artist', 'albumArtist'}) do
+				local source = metadata['xesam:' .. key]
+				if source then
+					replacements[key] = ""
+					for i, item in ipairs(source) do
+						if i ~= 1 then
+							replacements[key] = replacements[key] .. " & "
+						end
+						replacements[key] = replacements[key] .. item
+					end
+				end
+			end
+			-- formatted timestamps
+			replacements['position'] = format_timestamp(position)
+			replacements['length'] = format_timestamp(metadata['mpris:length'])
+			-- shorthands
+			replacements['title'] = metadata['xesam:title']
+			replacements['album'] = metadata['xesam:album']
+			-- other
+			replacements['player'] = player
 
-            hexchat.command(template_string(COMMAND_TEMPLATE, replacements))
-        end)
-    end)
+			hexchat.command(template_string(COMMAND_TEMPLATE, replacements))
+		end)
+	end)
 end
 
 hexchat.hook_command('np', function (word, word_eol)
