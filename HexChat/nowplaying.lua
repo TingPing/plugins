@@ -139,11 +139,12 @@ local function template_string (template, replacements)
         field, default = field:match('(.+)=(.*)') or field
         repl = replacements[field]
         if repl == nil and repl ~= nil then
-            repl = default
+            repl = default or ""
         end
         return repl
     end)
     template = template:gsub("\000", "$") -- \000 -> $
+	return template
 end
 
 local function print_nowplaying (player)
