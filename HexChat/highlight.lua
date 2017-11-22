@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('Highlights', '1', 'Prints highlights to another tab')
 
 local TAB_NAME = '(highlights)'

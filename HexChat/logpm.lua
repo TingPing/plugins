@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('LogPM', '2', 'Automatically log private queries')
 
 hexchat.hook_print('Open Context', function (args)

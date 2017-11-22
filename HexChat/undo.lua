@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 local bit = bit
 if not bit then
 	bit = require('bit32')

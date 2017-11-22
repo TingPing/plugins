@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('StatusColor', '1', 'Color nicks based upon user modes')
 
 -- TODO: Update these to reflect default theme

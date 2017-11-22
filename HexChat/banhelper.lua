@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('BanHelper', '1', 'Simpllifies banning and quieting')
 
 local function is_op ()
@@ -26,7 +27,7 @@ local function get_mask (nick)
 			else
 				print('BanHelper: Warning, user info not found, try enabling irc_who_join')
 				return nil
-			end			
+			end
 		end
 	end
 end

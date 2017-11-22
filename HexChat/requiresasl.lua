@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('RequireSASL', '1', 'Disconnect if SASL fails')
 
 hexchat.hook_print('SASL Response', function (args)

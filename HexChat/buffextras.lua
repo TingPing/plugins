@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('Buffextras', '1', "Format messages from ZNC's buffextras module")
 
 local function strip_brackets (str)

@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 local lgi = require "lgi"
 local Gio = lgi.Gio
 

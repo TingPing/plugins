@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 local lgi = require('lgi')
 local GLib = lgi.require('GLib')
 
@@ -5,7 +6,7 @@ hexchat.register('Playback', '1', "Integration with ZNC's Playback module")
 
 --[[
  This should behave like this:
-  
+
    On connect (end of MOTD):
        if new server, play all
        if old server, play all after latest timestamp
@@ -35,7 +36,7 @@ end)
 
 -- Capability supported
 hexchat.hook_print('Capability Acknowledgement', function (args)
-	local id = hexchat.prefs['id'] 
+	local id = hexchat.prefs['id']
 	if args[2]:find(CAP_NAME) and not servers[id] then
 		servers[id] = 0 -- New server
 	end

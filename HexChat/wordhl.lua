@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('WordHL', '1', 'Highlights some words of importance')
 -- When you want to notice something, but not really get 'highlighted'
 

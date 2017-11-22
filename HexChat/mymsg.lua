@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('MyMessage', '2', 'Properly show your own messages in ZNC playback')
 
 local function get_server_ctx()

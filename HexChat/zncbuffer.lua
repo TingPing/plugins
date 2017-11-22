@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('ZNC Buffers', '1', 'Add menu options to manage ZNC buffers')
 
 -- Add menus

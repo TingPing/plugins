@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('ServerPass', '1', 'Allows using server password with another login method')
 
 -- Configure networks here:

@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('Twitch', '1', 'Better integration with twitch.tv')
 
 local function is_twitch ()

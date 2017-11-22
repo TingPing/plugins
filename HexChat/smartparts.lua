@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('SmartParts', '1', 'Intelligently hide parts, joins, modes, and nick changes')
 
 local TIME_THRESHOLD = 60 * 5 -- in seconds
@@ -14,7 +15,7 @@ local function check_lasttalk (nick)
 		end
 	end
 
-	return hexchat.EAT_HEXCHAT	
+	return hexchat.EAT_HEXCHAT
 end
 
 local function check_you (nick)

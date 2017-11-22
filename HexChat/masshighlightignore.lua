@@ -1,3 +1,4 @@
+-- SPDX-License-Identifier: MIT
 hexchat.register('MassHighlightIgnore', '3', 'Ignore mass highlight spam')
 
 if unpack == nil then
