@@ -73,7 +73,7 @@ local function get_players (callback)
 			local players = {}
 			local array = ret.value[1]
 			for i = 1, #array do
-				local player_name = array[i]:match('^org%.mpris%.MediaPlayer2%.([^.]+)$')
+				local player_name = array[i]:match('^org%.mpris%.MediaPlayer2%.(.+)')
 				if player_name then
 					players[#players + 1] = player_name
 				end
