@@ -214,7 +214,7 @@ hexchat.hook_command('np', function (word, word_eol)
 		elseif #players == 1 then
 			print_nowplaying(players[1])
 		else
-			print('NP: You have multiple players running, please specify a name:\n\t' .. tostring(players))
+			print('NP: You have multiple players running, please specify a name:\n\t' .. table.concat(players, ', '))
 		end
 	end)
 
