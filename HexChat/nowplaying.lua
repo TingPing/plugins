@@ -157,31 +157,39 @@ local function print_nowplaying (player)
 				print("NP: original context has been closed")
 				return
 			end
-			local replacements = metadata -- there's no built-in function to make a shallow copy
 
-			-- aggregate artist and albumArtist fields
-			for _, key in pairs({'artist', 'albumArtist'}) do
-				local source = metadata['xesam:' .. key]
-				if source then
-					replacements[key] = ""
-					for i, item in ipairs(source) do
-						if i ~= 1 then
-							replacements[key] = replacements[key] .. " & "
+			-- I don't have the desire to track this down atm but the template system is
+			-- broken in luajit so just bypass it for now...
+			if type(jit) == 'table' then
+				local command = string.format('me is now playing %s by %s', metadata['xesam:title'], metadata['xesam:artist'][1])
+				hexchat.command(command)
+			else
+				local replacements = metadata -- there's no built-in function to make a shallow copy
+
+				-- aggregate artist and albumArtist fields
+				for _, key in pairs({'artist', 'albumArtist'}) do
+					local source = metadata['xesam:' .. key]
+					if source then
+						replacements[key] = ""
+						for i, item in ipairs(source) do
+							if i ~= 1 then
+								replacements[key] = replacements[key] .. " & "
+							end
+							replacements[key] = replacements[key] .. item
 						end
-						replacements[key] = replacements[key] .. item
 					end
 				end
-			end
-			-- formatted timestamps
-			replacements['position'] = format_timestamp(position)
-			replacements['length'] = format_timestamp(metadata['mpris:length'])
-			-- shorthands
-			replacements['title'] = metadata['xesam:title']
-			replacements['album'] = metadata['xesam:album']
-			-- other
-			replacements['player'] = player
+				-- formatted timestamps
+				replacements['position'] = format_timestamp(position)
+				replacements['length'] = format_timestamp(metadata['mpris:length'])
+				-- shorthands
+				replacements['title'] = metadata['xesam:title']
+				replacements['album'] = metadata['xesam:album']
+				-- other
+				replacements['player'] = player
 
-			hexchat.command(template_string(COMMAND_TEMPLATE, replacements))
+				hexchat.command(template_string(COMMAND_TEMPLATE, replacements))
+			end
 		end)
 	end)
 end
