@@ -13,6 +13,11 @@ hexchat.hook_server_attrs('PRIVMSG', function (word, word_eol, attrs)
 	local channel = word[3]
 	local nick, host = word[4]:match('^:([^!]+)!(.*)$')
 
+	-- don't eat modes & kicks from servers (we can't split them into nick + host)
+	if nick == '' or nick == nil then
+		nick = word[4]:sub(2) -- chop off leading ":"
+	end
+
 	local function is_event (event)
 		return word_eol[5]:sub(1, #event) == event
 	end
