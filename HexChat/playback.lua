@@ -42,13 +42,21 @@ hexchat.hook_print('Capability Acknowledgement', function (args)
 	end
 end)
 
--- On successful connection play history
-hexchat.hook_server('376', function (word, word_eol)
+local function play_history()
 	local timestamp = servers[hexchat.prefs['id']]
 
 	if timestamp then
 		hexchat.command('quote PRIVMSG *playback :play * ' .. tostring(timestamp))
 	end
+end
+
+-- On RPL_ENDOFMOTD or ERR_NOMOTD play history
+hexchat.hook_server('376', function (word, word_eol)
+	play_history()
+end)
+
+hexchat.hook_server('422', function (word, word_eol)
+	play_history()
 end)
 
 -- Remove history when closed
