@@ -182,7 +182,9 @@ local function print_nowplaying (player)
 				-- formatted timestamps
 				replacements['position'] = format_timestamp(position)
 				replacements['length'] = format_timestamp(metadata['mpris:length'])
-				-- shorthands
+				if replacements['length'] == nil then
+					replacements['length'] = '(radio stream)'
+				end
 				replacements['title'] = metadata['xesam:title']
 				replacements['album'] = metadata['xesam:album']
 				-- other
